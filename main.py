@@ -3,10 +3,21 @@ from tkinter import *
 from PIL import ImageTk, Image
 
 def start_game():
+    global player_symbol, computer_symbol, turn
+    selected_option = selected.get()
+    if selected_option == "X":
+        player_symbol = "x"
+        computer_symbol = "o"
+    else:
+        player_symbol = "o"
+        computer_symbol = "x"
+    turn = player_symbol
     start_window.destroy()
     game_window()
 
 def game_window():
+    global root, frame1, frame2, titleLabel, buttons, game_end, turn, player_symbol, computer_symbol, board
+
     root = Tk()
     root.geometry("535x500")
     root.title("Tic Tac Toe")
@@ -24,7 +35,6 @@ def game_window():
               4:" " , 5:" " , 6:" ",
               7:" " , 8:" " , 9:" " }
 
-    turn = "x"
     game_end = False
     mode = "singlePlayer"
 
@@ -63,15 +73,12 @@ def game_window():
         return False
 
     def resetGame():
-        global game_end, board
+        global game_end, board, turn
         game_end = False
         board = {i: " " for i in range(1, 10)}  # Reiniciar el tablero
         updateBoard()  # Actualizar la interfaz
-        for button in buttons:
-            button["text"] = " "
-        for i in board.keys():
-            board[i] = " "
         titleLabel.config(text="Tic Tac Toe")
+        turn = player_symbol
 
     def checkForDraw():
         for i in board.keys():
@@ -80,10 +87,10 @@ def game_window():
         return True
 
     def minimax(board , isMaximizing):
-        if checkForWin("o"):
+        if checkForWin(computer_symbol):
             return 1 
         
-        if checkForWin("x"):
+        if checkForWin(player_symbol):
             return -1
         
         if checkForDraw():
@@ -93,7 +100,7 @@ def game_window():
             bestScore = -100
             for key in board.keys():
                 if board[key] == " ":
-                    board[key] = "o"
+                    board[key] = computer_symbol
                     score = minimax(board , False) # minimax
                     board[key] = " "
                     if score > bestScore : 
@@ -103,7 +110,7 @@ def game_window():
             bestScore = 100
             for key in board.keys():
                 if board[key] == " ":
-                    board[key] = "x"
+                    board[key] = player_symbol
                     score = minimax(board , True) # minimax
                     board[key] = " "
                     if score < bestScore : 
@@ -115,79 +122,51 @@ def game_window():
         bestMove = 0
         for key in board.keys():
             if board[key] == " ":
-                board[key] = "o"
+                board[key] = computer_symbol
                 score = minimax(board , False) # minimax
                 board[key] = " "
                 if score > bestScore : 
                     bestScore = score 
                     bestMove = key
-        board[bestMove] = "o"
+        board[bestMove] = computer_symbol
+        updateBoard()
 
     def play(event):
-        global turn,game_end
+        global turn, game_end
         if game_end:
             return
         
         button = event.widget
-        buttonText = str(button)
-        clicked = int(buttonText.split(".")[-1]) if buttonText.split(".")[-1].isdigit() else 1
+        button_index = buttons.index(button) + 1
         
         if button["text"] == " ":
-            if turn == "x" :
-                board[clicked] = turn
-                if checkForWin(turn):
-                    winningLabel = Label(frame1 , text=f"{turn} gana el juego", bg="orange", font=("Arial" , 26),width=16 )
-                    winningLabel.grid(row = 0 , column=0 , columnspan=3)
-                    game_end = True
-                turn = "o"
-                updateBoard()
-                if mode == "singlePlayer":
+            board[button_index] = turn
+            updateBoard()
+            if checkForWin(turn):
+                winningLabel = Label(frame1, text=f"{turn} gana el juego", bg="orange", font=("Arial", 26), width=16)
+                winningLabel.grid(row=0, column=0, columnspan=3)
+                game_end = True
+            elif checkForDraw():
+                drawLabel = Label(frame1, text=f"empate", bg="orange", font=("Arial", 26), width=16)
+                drawLabel.grid(row=0, column=0, columnspan=3)
+                game_end = True
+            else:
+                turn = computer_symbol if turn == player_symbol else player_symbol
+                if mode == "singlePlayer" and turn == computer_symbol and not game_end:
                     playComputer()
                     if checkForWin(turn):
-                        winningLabel = Label(frame1 , text=f"{turn} gana el juego", bg="orange", font=("Arial" , 26),width=16   )
-                        winningLabel.grid(row = 0 , column=0 , columnspan=3)
+                        winningLabel = Label(frame1, text=f"{turn} gana el juego", bg="orange", font=("Arial", 26), width=16)
+                        winningLabel.grid(row=0, column=0, columnspan=3)
                         game_end = True
-                    turn = "x"
+                    turn = player_symbol
                     updateBoard()
-            else:
-                board[clicked] = turn
-                updateBoard()
-                if checkForWin(turn):
-                    winningLabel = Label(frame1 , text=f"{turn} gana el juego" , bg="orange", font=("Arial" , 26),width=16)
-                    winningLabel.grid(row = 0 , column=0 , columnspan=3)
-                    game_end = True
-                turn = "x"
             
-            if checkForDraw():
-                drawLabel = Label(frame1 , text=f"empate" , bg="orange", font=("Arial" , 26), width = 16)
-                drawLabel.grid(row = 0 , column=0 , columnspan=3)
-            turn="x"
-            
-    image1 = Image.open("../nestor/pj.jpg")  # Asegúrate de que la ruta sea correcta
-    new_img = image1.resize((100, 100))
-    new_img.save("pj2.jpg")
-    photo1 = ImageTk.PhotoImage(new_img)
-    image2 = Image.open("../nestor/chocol1.jpg")  # Asegúrate de que la ruta sea correcta
-    new_img = image2.resize((100, 100))
-    new_img.save("chocol1-2.jpg")
-    photo2 = ImageTk.PhotoImage(new_img)
-
-    canvas1 = Canvas(frame2, width=100, height=100)  # Ajusta el tamaño según tus imágenes
-    canvas1.grid(row=1, column=0)
-    canvas2 = Canvas(frame2, width=100, height=100)
-    canvas2.grid(row=1, column=5)
-
-    # Crear imágenes en los canvas
-    canvas1.create_image(50, 50, image=photo1)
-    canvas2.create_image(50, 50, image=photo2)
-
     buttons = []
-
     for i in range(3):
         for j in range(1, 4):
-            button = Button(frame2 , text= " " , width=4 , height=2  , font=("Arial" , 30) , bg="yellow" , relief=RAISED , borderwidth=5)
-            button.grid(row = i , column=j)
-            button.bind("<Button-1>" , play)
+            button = Button(frame2, text=" ", width=4, height=2, font=("Arial", 30), bg="yellow", relief=RAISED, borderwidth=5)
+            button.grid(row=i, column=j)
+            button.bind("<Button-1>", play)
             buttons.append(button)
 
     restartButton = Button(frame2 , text="Reiniciar" , width=19 , height=1 , font=("Arial" , 20) , bg="Green" , relief=RAISED , borderwidth=5 , command=resetGame )
@@ -202,6 +181,12 @@ start_window.resizable(0,0)
 
 label = tk.Label(start_window, text="Bienvenido al Juego", font=("Helvetica", 16))
 label.pack(pady=20)
+
+selected = tk.StringVar(value="X")
+x_radio = tk.Radiobutton(start_window, text="X", variable=selected, value="X", font=("Helvetica", 12))
+x_radio.pack(pady=5)
+o_radio = tk.Radiobutton(start_window, text="O", variable=selected, value="O", font=("Helvetica", 12))
+o_radio.pack(pady=5)
 
 start_button = tk.Button(start_window, text="Comenzar", command=start_game, font=("Helvetica", 12), bg="yellow")
 start_button.pack(pady=10)
