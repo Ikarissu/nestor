@@ -2,6 +2,10 @@ import tkinter as tk
 from tkinter import *
 from PIL import ImageTk, Image
 
+player_score = 0
+computer_score = 0
+empate_score = 0
+
 def start_game():
     global player_symbol, computer_symbol, turn
     selected_option = selected.get()
@@ -16,7 +20,7 @@ def start_game():
     game_window()
 
 def game_window():
-    global root, frame1, frame2, titleLabel, buttons, game_end, turn, player_symbol, computer_symbol, board
+    global root, frame1, frame2, titleLabel, buttons, game_end, turn, player_symbol, computer_symbol, board, player_score, computer_score, empate_score
 
     root = Tk()
     root.geometry("535x500")
@@ -132,7 +136,7 @@ def game_window():
         updateBoard()
 
     def play(event):
-        global turn, game_end
+        global turn, game_end, player_score, computer_score, empate_score
         if game_end:
             return
         
@@ -143,10 +147,17 @@ def game_window():
             board[button_index] = turn
             updateBoard()
             if checkForWin(turn):
+                if turn == player_symbol:
+                    player_score += 1
+                else:
+                    computer_score += 1
+                update_score_label()
                 winningLabel = Label(frame1, text=f"{turn} gana el juego", bg="orange", font=("Arial", 26), width=16)
                 winningLabel.grid(row=0, column=0, columnspan=3)
                 game_end = True
             elif checkForDraw():
+                empate_score += 1
+                update_score_label()
                 drawLabel = Label(frame1, text=f"empate", bg="orange", font=("Arial", 26), width=16)
                 drawLabel.grid(row=0, column=0, columnspan=3)
                 game_end = True
@@ -155,12 +166,15 @@ def game_window():
                 if mode == "singlePlayer" and turn == computer_symbol and not game_end:
                     playComputer()
                     if checkForWin(turn):
+                        computer_score += 1
+                        update_score_label()
                         winningLabel = Label(frame1, text=f"{turn} gana el juego", bg="orange", font=("Arial", 26), width=16)
                         winningLabel.grid(row=0, column=0, columnspan=3)
                         game_end = True
                     turn = player_symbol
                     updateBoard()
-            
+    def update_score_label():
+        score_label.config(text=f"Jugador: {player_score} - Computadora: {computer_score} - Empates: {empate_score}")      
     buttons = []
     for i in range(3):
         for j in range(1, 4):
@@ -171,7 +185,8 @@ def game_window():
 
     restartButton = Button(frame2 , text="Reiniciar" , width=19 , height=1 , font=("Arial" , 20) , bg="Green" , relief=RAISED , borderwidth=5 , command=resetGame )
     restartButton.grid(row=4 , column=1 , columnspan=3)
-
+    score_label = Label(frame1, text=f"Jugador: {player_score} - Computadora: {computer_score} - Empates: {empate_score}", font=("Arial", 16), bg="white")
+    score_label.grid(row=1, column=0)
     root.mainloop()
 
 start_window = tk.Tk()
