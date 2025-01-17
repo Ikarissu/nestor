@@ -29,6 +29,7 @@ def game_window():
 
     frame1 = Frame(root)
     frame1.pack()
+    # Usamos un solo Label para mostrar el título y los mensajes
     titleLabel = Label(frame1 , text="Tic Tac Toe" , font=("Arial" , 26) , bg="orange" , width=27 )
     titleLabel.grid(row=0 , column=0)
 
@@ -81,7 +82,7 @@ def game_window():
         game_end = False
         board = {i: " " for i in range(1, 10)}  # Reiniciar el tablero
         updateBoard()  # Actualizar la interfaz
-        titleLabel.config(text="Tic Tac Toe")
+        titleLabel.config(text="Tic Tac Toe")  # Restablecer el título
         turn = player_symbol
 
     def checkForDraw():
@@ -152,14 +153,12 @@ def game_window():
                 else:
                     computer_score += 1
                 update_score_label()
-                winningLabel = Label(frame1, text=f"{turn} gana el juego", bg="orange", font=("Arial", 26), width=16)
-                winningLabel.grid(row=0, column=0, columnspan=3)
+                titleLabel.config(text=f"{turn} gana el juego")  # Mostrar mensaje de victoria
                 game_end = True
             elif checkForDraw():
                 empate_score += 1
                 update_score_label()
-                drawLabel = Label(frame1, text=f"empate", bg="orange", font=("Arial", 26), width=16)
-                drawLabel.grid(row=0, column=0, columnspan=3)
+                titleLabel.config(text=f"Empate")  # Mostrar mensaje de empate
                 game_end = True
             else:
                 turn = computer_symbol if turn == player_symbol else player_symbol
@@ -168,8 +167,7 @@ def game_window():
                     if checkForWin(turn):
                         computer_score += 1
                         update_score_label()
-                        winningLabel = Label(frame1, text=f"{turn} gana el juego", bg="orange", font=("Arial", 26), width=16)
-                        winningLabel.grid(row=0, column=0, columnspan=3)
+                        titleLabel.config(text=f"{turn} gana el juego")  # Mostrar mensaje de victoria
                         game_end = True
                     turn = player_symbol
                     updateBoard()
