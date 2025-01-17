@@ -20,7 +20,7 @@ def start_game():
     game_window()
 
 def game_window():
-    global root, frame1, frame2, titleLabel, buttons, game_end, turn, player_symbol, computer_symbol, board, player_score, computer_score, empate_score
+    global root, frame1, frame2, titleLabel, buttons, game_end, turn, player_symbol, computer_symbol, board, player_score, computer_score, empate_score, waiting_for_computer
 
     root = Tk()
     root.geometry("535x535")
@@ -41,6 +41,7 @@ def game_window():
               7:" " , 8:" " , 9:" " }
 
     game_end = False
+    waiting_for_computer = False
     mode = "singlePlayer"
 
     def updateBoard():
@@ -78,12 +79,14 @@ def game_window():
         return False
 
     def resetGame():
-        global game_end, board, turn
+        global game_end, board, turn, waiting_for_computer
         game_end = False
+        waiting_for_computer = False
         board = {i: " " for i in range(1, 10)}  # Reiniciar el tablero
         updateBoard()  # Actualizar la interfaz
         titleLabel.config(text="Tic Tac Toe")  # Restablecer el título
         turn = player_symbol
+        enable_buttons()
 
     def checkForDraw():
         for i in board.keys():
@@ -137,8 +140,8 @@ def game_window():
         updateBoard()
 
     def play(event):
-        global turn, game_end, player_score, computer_score, empate_score
-        if game_end:
+        global turn, game_end, player_score, computer_score, empate_score, waiting_for_computer
+        if game_end or waiting_for_computer:
             return
         
         button = event.widget
@@ -163,11 +166,13 @@ def game_window():
             else:
                 turn = computer_symbol if turn == player_symbol else player_symbol
                 if mode == "singlePlayer" and turn == computer_symbol and not game_end:
+                    disable_buttons()
+                    waiting_for_computer = True
                     # Retrasar la jugada de la computadora
                     root.after(1000, lambda: playComputerAndCheckWin())  # 1000 ms = 1 segundo
 
     def playComputerAndCheckWin():
-        global turn, game_end, computer_score, empate_score
+        global turn, game_end, computer_score, empate_score, waiting_for_computer
         playComputer()
         if checkForWin(computer_symbol):
             computer_score += 1
@@ -181,9 +186,20 @@ def game_window():
             game_end = True
         else:
             turn = player_symbol
+        waiting_for_computer = False
+        enable_buttons()
 
     def update_score_label():
         score_label.config(text=f"Jugador: {player_score} - Computadora: {computer_score} - Empates: {empate_score}")      
+    
+    def disable_buttons():
+        for button in buttons:
+            button.config(state="disabled")
+
+    def enable_buttons():
+        for button in buttons:
+            button.config(state="normal")
+
     buttons = []
     for i in range(3):
         for j in range(1, 4):
