@@ -23,7 +23,7 @@ def game_window():
     global root, frame1, frame2, titleLabel, buttons, game_end, turn, player_symbol, computer_symbol, board, player_score, computer_score, empate_score
 
     root = Tk()
-    root.geometry("535x500")
+    root.geometry("535x535")
     root.title("Tic Tac Toe")
     root.resizable(0,0)
 
