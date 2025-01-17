@@ -163,14 +163,25 @@ def game_window():
             else:
                 turn = computer_symbol if turn == player_symbol else player_symbol
                 if mode == "singlePlayer" and turn == computer_symbol and not game_end:
-                    playComputer()
-                    if checkForWin(turn):
-                        computer_score += 1
-                        update_score_label()
-                        titleLabel.config(text=f"{turn} gana el juego")  # Mostrar mensaje de victoria
-                        game_end = True
-                    turn = player_symbol
-                    updateBoard()
+                    # Retrasar la jugada de la computadora
+                    root.after(1000, lambda: playComputerAndCheckWin())  # 1000 ms = 1 segundo
+
+    def playComputerAndCheckWin():
+        global turn, game_end, computer_score, empate_score
+        playComputer()
+        if checkForWin(computer_symbol):
+            computer_score += 1
+            update_score_label()
+            titleLabel.config(text=f"{computer_symbol} gana el juego")  # Mostrar mensaje de victoria
+            game_end = True
+        elif checkForDraw():
+            empate_score += 1
+            update_score_label()
+            titleLabel.config(text=f"Empate")  # Mostrar mensaje de empate
+            game_end = True
+        else:
+            turn = player_symbol
+
     def update_score_label():
         score_label.config(text=f"Jugador: {player_score} - Computadora: {computer_score} - Empates: {empate_score}")      
     buttons = []
