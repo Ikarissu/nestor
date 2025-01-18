@@ -20,7 +20,7 @@ class MainMenu(ctk.CTk):
         self.geometry("1080x720")
 
         # Cargar la imagen de fondo del menú
-        self.original_image = Image.open("./images/gif1.gif")  
+        self.original_image = Image.open("gif1.gif")  
         self.background_label = tk.Label(self)
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)  
 
@@ -273,7 +273,7 @@ class OptionsWindow(ctk.CTkToplevel):
         self.geometry("1080x720")
 
         # Cargar la imagen de fondo de la ventana de opciones
-        self.original_image = Image.open("./images/img2.jpg")  
+        self.original_image = Image.open("img2.jpg")  
         self.background_label = tk.Label(self)
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1) 
 
