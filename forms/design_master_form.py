@@ -1,10 +1,16 @@
 import tkinter as tk
 from tkinter import font, messagebox
 from PIL import Image, ImageTk
-from config import Sidebar_color, Hover_Menu_color, Top_Bar_color, Main_Body_color
 import useful.useful_image as useful_img
 import useful.useful_window as useful_window
 import random
+
+from config import (
+    Top_Bar_color_easy, Top_Bar_color_medium, Top_Bar_color_hard,
+    Sidebar_color_easy, Sidebar_color_medium, Sidebar_color_hard,
+    Main_Body_color_easy, Main_Body_color_medium, Main_Body_color_hard,
+    Hover_Menu_color_easy, Hover_Menu_color_medium, Hover_Menu_color_hard
+)
 
 class design_master_form(tk.Toplevel):
     def __init__(self, difficulty, player_symbol, computer_symbol):
@@ -29,6 +35,23 @@ class design_master_form(tk.Toplevel):
 
         # Declarar self.perfil
         self.perfil = useful_img.read_image("./images/jugador.png", (100, 100))
+
+        # Ajustar colores según la dificultad
+        if self.difficulty == "easy":
+            self.Top_Bar_color = Top_Bar_color_easy
+            self.Sidebar_color = Sidebar_color_easy
+            self.Main_Body_color = Main_Body_color_easy
+            self.Hover_Menu_color = Hover_Menu_color_easy
+        elif self.difficulty == "medium":
+            self.Top_Bar_color = Top_Bar_color_medium
+            self.Sidebar_color = Sidebar_color_medium
+            self.Main_Body_color = Main_Body_color_medium
+            self.Hover_Menu_color = Hover_Menu_color_medium
+        elif self.difficulty == "hard":
+            self.Top_Bar_color = Top_Bar_color_hard
+            self.Sidebar_color = Sidebar_color_hard
+            self.Main_Body_color = Main_Body_color_hard
+            self.Hover_Menu_color = Hover_Menu_color_hard
 
         self.create_widgets()
         self.updateBoard()
@@ -65,41 +88,41 @@ class design_master_form(tk.Toplevel):
         self.bind("<Configure>", self.resize_background)
 
     def top_bar_controls(self, main_frame):
-        top_bar = tk.Frame(main_frame, bg=Top_Bar_color, height=50)
+        top_bar = tk.Frame(main_frame, bg=self.Top_Bar_color, height=50)
         top_bar.pack(side=tk.TOP, fill=tk.X)
 
         font_awesome = font.Font(family='fontAwesome', size=12)
 
-        self.titleLabel = tk.Label(top_bar, text="Tic Tac Toe", font=("Arial", 24), bg=Top_Bar_color, fg="white")
+        self.titleLabel = tk.Label(top_bar, text="Tic Tac Toe", font=("Arial", 24), bg=self.Top_Bar_color, fg="white")
         self.titleLabel.pack(pady=10)
 
         self.labelTitle = tk.Label(top_bar, text="Choclo game")
-        self.labelTitle.config(fg="#fff", font=("Roboto", 15), bg=Top_Bar_color, pady=10, width=16)
+        self.labelTitle.config(fg="#fff", font=("Roboto", 15), bg=self.Top_Bar_color, pady=10, width=16)
         self.labelTitle.pack(side=tk.LEFT)
 
         self.buttonsidebar = tk.Button(top_bar, text="\uf0c9", font=font_awesome,
-                                       command=self.toggle_panel, bd=0, bg=Top_Bar_color, fg="white")
+                                       command=self.toggle_panel, bd=0, bg=self.Top_Bar_color, fg="white")
         self.buttonsidebar.pack(side=tk.LEFT)
 
         self.labelTitle = tk.Label(top_bar, text="¡Bienvenido a choclo game!")
-        self.labelTitle.config(fg="#fff", font=("Roboto", 15), bg=Top_Bar_color, padx=20, width=20)
+        self.labelTitle.config(fg="#fff", font=("Roboto", 15), bg=self.Top_Bar_color, padx=20, width=20)
         self.labelTitle.pack(side=tk.RIGHT)
 
     def side_bar_controls(self, main_frame):
-        side_bar = tk.Frame(main_frame, bg=Sidebar_color, width=200)
+        side_bar = tk.Frame(main_frame, bg=self.Sidebar_color, width=200)
         side_bar.pack(side=tk.LEFT, fill=tk.Y)
 
         self.score_label = tk.Label(side_bar, text=f"Jugador: {self.player_score}\nComputadora: {self.computer_score}\nEmpates: {self.empate_score}", font=("Arial", 16), bg="gray", fg="white")
         self.score_label.pack(pady=20)
 
-        reset_button = tk.Button(side_bar, text="Reiniciar", command=self.resetGame, font=("Arial", 16), bg=Sidebar_color)
+        reset_button = tk.Button(side_bar, text="Reiniciar", command=self.resetGame, font=("Arial", 16), bg=self.Sidebar_color)
         reset_button.pack(pady=10)
 
         width_menu = 20
         height_menu = 2
         font_awesome = font.Font(family='FontAwesome', size=12)
 
-        self.labelperfil = tk.Label(side_bar, image=self.perfil, bg=Sidebar_color)
+        self.labelperfil = tk.Label(side_bar, image=self.perfil, bg=self.Sidebar_color)
         self.labelperfil.pack(side=tk.TOP, pady=10)
 
         self.buttonScore = tk.Button(side_bar)
@@ -121,7 +144,7 @@ class design_master_form(tk.Toplevel):
 
     def bar_button_config(self, button, text, icon, font_awesome, width_menu, height_menu):
         button.config(text=f'  {icon}   {text}', anchor='w', font=font_awesome,
-                      bd=0, bg=Sidebar_color, fg='white', width=width_menu, height=height_menu)
+                      bd=0, bg=self.Sidebar_color, fg='white', width=width_menu, height=height_menu)
         button.pack(side=tk.TOP)
         self.bind_hover_events(button)
 
@@ -130,10 +153,10 @@ class design_master_form(tk.Toplevel):
         button.bind("<Leave>", lambda event: self.on_leave(event, button))
 
     def on_enter(self, event, button):
-        button.config(bg=Hover_Menu_color, fg='white')
+        button.config(bg=self.Hover_Menu_color, fg='white')
 
     def on_leave(self, event, button):
-        button.config(bg=Sidebar_color, fg='white')
+        button.config(bg=self.Sidebar_color, fg='white')
 
     def toggle_panel(self):
         if self.side_bar.winfo_ismapped():
