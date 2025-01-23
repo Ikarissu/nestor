@@ -131,11 +131,16 @@ def game_window():
     def checkForDraw():
         return all(board[i] != " " for i in board.keys())
 
-    def minimax(board, isMaximizing):
+    def minimax(board, isMaximizing, depth, max_depth):
+        if depth == max_depth:
+            return 0  # Retorna un valor neutral si se alcanza la profundidad máxima
+        
         if checkForWin(computer_symbol):
             return 1 
+        
         if checkForWin(player_symbol):
             return -1
+        
         if checkForDraw():
             return 0
         
@@ -144,18 +149,20 @@ def game_window():
             for key in board.keys():
                 if board[key] == " ":
                     board[key] = computer_symbol
-                    score = minimax(board, False)
+                    score = minimax(board, False, depth + 1, max_depth)  # Llamada recursiva con profundidad incrementada
                     board[key] = " "
-                    bestScore = max(score, bestScore)
+                    if score > bestScore: 
+                        bestScore = score 
             return bestScore
         else:
             bestScore = 100
             for key in board.keys():
                 if board[key] == " ":
                     board[key] = player_symbol
-                    score = minimax(board, True)
+                    score = minimax(board, True, depth + 1, max_depth)  # Llamada recursiva con profundidad incrementada
                     board[key] = " "
-                    bestScore = min(score, bestScore)
+                    if score < bestScore: 
+                        bestScore = score 
             return bestScore
 
     def playComputer():
@@ -171,42 +178,31 @@ def game_window():
         
         elif difficulty == "hard":
             bestScore = -100
-            bestMove = None
+            bestMove = 0
+            max_depth = 12 # Profundidad máxima limitada
             for key in board.keys():
                 if board[key] == " ":
                     board[key] = computer_symbol
-                    score = minimax(board, False)
+                    score = minimax(board, False, 0, max_depth)  # Llamada a minimax con profundidad limitada
                     board[key] = " "
                     if score > bestScore: 
                         bestScore = score 
                         bestMove = key
-            if bestMove is not None:
-                board[bestMove] = computer_symbol
+            board[bestMove] = computer_symbol
 
         elif difficulty == "medium":
-            if sum(1 for v in board.values() if v == " ") < 7:
-                bestScore = -100
-                for key in board.keys():
-                    if board[key] == " ":
-                        board[key] = computer_symbol
-                        if checkForWin(computer_symbol):
-                            bestMove = key
-                        board[key] = " "
-                if bestMove is None:
-                    bestMove = min([key for key in board.keys() if board[key] == " "], key=lambda k: k)
-                board[bestMove] = computer_symbol
-            else:
-                bestScore = -100
-                bestMove = None
-                for key in board.keys():
-                    if board[key] == " ":
-                        board[key] = computer_symbol
-                        score = minimax(board, False)
-                        board[key] = " "
-                        if score > bestScore: 
-                            bestScore = score 
-                            bestMove = key
-                board[bestMove] = computer_symbol
+            bestScore = -100
+            bestMove = 0
+            max_depth = 2 # Profundidad máxima limitada
+            for key in board.keys():
+                if board[key] == " ":
+                    board[key] = computer_symbol
+                    score = minimax(board, False, 0, max_depth)  # Llamada a minimax con profundidad limitada
+                    board[key] = " "
+                    if score > bestScore: 
+                        bestScore = score 
+                        bestMove = key
+        board[bestMove] = computer_symbol
 
         updateBoard()
 
