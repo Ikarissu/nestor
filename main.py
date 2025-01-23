@@ -12,6 +12,7 @@ class SelectDifficulty(tk.Toplevel):
     def __init__(self, parent, on_difficulty_selected):
         super().__init__(parent)
         self.geometry("300x200")
+        self.iconbitmap("./images/icono_juego.ico")
         self.title("Seleccionar Dificultad")
 
         label = tk.Label(self, text="Selecciona la Dificultad", font=("Helvetica", 12))
@@ -34,6 +35,7 @@ class SelectSymbol(tk.Toplevel):
     def __init__(self, parent, difficulty, on_symbol_selected):
         super().__init__(parent)
         self.geometry("300x200")
+        self.iconbitmap("./images/icono_juego.ico")
         self.title("Seleccionar Ficha")
 
         label = tk.Label(self, text="Selecciona tu Ficha", font=("Helvetica", 12))
@@ -62,6 +64,7 @@ class MainMenu(ctk.CTk):
 
         self.title("Choclo Game")
         self.geometry("1080x720")
+        self.iconbitmap("./images/icono_juego.ico")
 
         # Cargar la imagen de fondo del menú
         try:
@@ -149,6 +152,7 @@ class OptionsWindow(ctk.CTkToplevel):
         # Configuración de la ventana
         self.title("Opciones")
         self.geometry("1080x720")
+        self.iconbitmap("./images/icono_juego.ico")
 
         # Cargar la imagen de fondo de la ventana de opciones
         self.original_image = Image.open("./images/img2.jpg")  

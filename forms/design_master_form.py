@@ -11,7 +11,7 @@ class design_master_form(tk.Toplevel):
         super().__init__()
         self.title('Choclo Game')
         self.geometry("1280x720")
-        self.iconbitmap("./images/Choclo.ico")
+        self.iconbitmap("./images/icono_juego.ico")
         
         self.difficulty = difficulty
         self.player_symbol = player_symbol
