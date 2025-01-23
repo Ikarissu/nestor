@@ -28,10 +28,10 @@ def select_difficulty():
 
     easy_button = tk.Button(difficulty_window, text="Facil", command=lambda: set_difficulty("easy"))
     easy_button.pack(pady=5)
-    medium_button = tk.Button(difficulty_window, text="Medio", command=lambda: set_difficulty("medium"))
-    medium_button.pack(pady=5)
-    hard_button = tk.Button(difficulty_window, text="Dificil", command=lambda: set_difficulty("hard"))
+    hard_button = tk.Button(difficulty_window, text="Medio", command=lambda: set_difficulty("medium"))
     hard_button.pack(pady=5)
+    medium_button = tk.Button(difficulty_window, text="Difícil", command=lambda: set_difficulty("hard"))
+    medium_button.pack(pady=5)
 
 def select_symbol():
     global symbol_window
@@ -169,7 +169,7 @@ def game_window():
                 if buttons[r-1]["text"] == " ":
                     break
         
-        elif difficulty == "medium":
+        elif difficulty == "hard":
             bestScore = -100
             bestMove = None
             for key in board.keys():
@@ -183,7 +183,7 @@ def game_window():
             if bestMove is not None:
                 board[bestMove] = computer_symbol
 
-        elif difficulty == "hard":
+        elif difficulty == "medium":
             if sum(1 for v in board.values() if v == " ") < 7:
                 bestScore = -100
                 for key in board.keys():
