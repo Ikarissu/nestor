@@ -3,9 +3,9 @@
 # Main_Body_color = "#283747"
 # Hover_Menu_color = "#D33243"
 
-Top_Bar_color_easy = "#74b9ff"  # Azul
-Top_Bar_color_medium = "#a29bfe"  # Morado
-Top_Bar_color_hard = "#ff7675"  # Rojo
+Top_Bar_color_easy = "#274bac"  # Azul
+Top_Bar_color_medium = "#5131b0"  # Morado
+Top_Bar_color_hard = "#853031"  # Rojo
 
 Sidebar_color_easy = "#0984e3"
 Sidebar_color_medium = "#6c5ce7"
