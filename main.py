@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import *
 import customtkinter as ctk
 from forms.design_master_form import design_master_form
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageSequence
+import customtkinter as ctk
 
 # Configuración de la apariencia de CustomTkinter
 ctk.set_appearance_mode("dark")  # Opciones: "light", "dark", "system"
@@ -57,60 +58,101 @@ class SelectSymbol(tk.Toplevel):
     def close_game(self, symbol):
         self.on_symbol_selected(symbol)
         
-
 class MainMenu(ctk.CTk):
     def __init__(self):
         super().__init__()
 
         self.title("Choclo Game")
-        self.geometry("1080x720")
-        self.iconbitmap("./images/icono_juego.ico")
+        self.geometry("1280x720")
+        self.resizable(False, False)
+        self.maxsize(1280, 720)
+        self.iconbitmap("")
 
         # Cargar la imagen de fondo del menú
         try:
-            self.original_image = Image.open("./images/gif1.gif")
+            self.original_image = Image.open("./images/habitacion.gif")
+            self.frames = [ImageTk.PhotoImage(img.copy().resize((1280, 720), Image.LANCZOS)) for img in ImageSequence.Iterator(self.original_image)]
         except Exception as e:
             print(f"Error al cargar la imagen: {e}")
-            self.original_image = None  # O asigna una imagen por defecto
+            self.frames = []
 
         self.background_label = tk.Label(self)
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)  
 
         # Título
-        self.title_label = ctk.CTkLabel(self, text="CHOCLO GAME", font=("Arial", 70), text_color="white")
+        self.title_label = ctk.CTkLabel(self, text="CHOCLO GAME", font=("Times New Roman", 70), text_color="white", bg_color="transparent")
         self.title_label.pack(pady=(100, 20))
-
+        self.configure(bg="transparent")
+                        
+        
         # Botones
-        self.play_button = ctk.CTkButton(self, text="JUGAR", command=self.play, width=300, height=80, fg_color="#0b5345", hover_color="lightgreen", font=("Arial", 20))
+        self.play_button = ctk.CTkButton(
+            self, 
+            text="JUGAR", 
+            command=self.play, 
+            width=300, 
+            height=80, 
+            fg_color="#0b5345", 
+            hover_color="lightgreen", 
+            font=("Arial", 20),
+            border_color="black", 
+            border_width=2,
+            text_color="white"
+        )
         self.play_button.pack(pady=20)
-
-        self.options_button = ctk.CTkButton(self, text="OPCIONES", command=self.open_options, width=300, height=80, fg_color="#0b5345", hover_color="lightgreen", font=("Arial", 20))
+        
+        self.options_button = ctk.CTkButton(
+            self, 
+            text="OPCIONES", 
+            command=self.open_options, 
+            width=300, 
+            height=80, 
+            fg_color="#0b5345", 
+            hover_color="lightgreen", 
+            font=("Arial", 20),
+            border_color="black", 
+            border_width=2,
+            text_color="white"
+        )
         self.options_button.pack(pady=20)
 
-        self.quit_button = ctk.CTkButton(self, text="SALIR", command=self.quit, width=300, height=80, fg_color="#0b5345", hover_color="lightgreen", font=("Arial", 20))
-        self.quit_button.pack(pady=20)
+        self.options_button = ctk.CTkButton(
+            self, 
+            text="SALIR", 
+            command=self.quit, 
+            width=300, 
+            height=80, 
+            fg_color="#0b5345", 
+            hover_color="lightgreen", 
+            font=("Arial", 20),
+            border_color="black", 
+            border_width=2,
+            text_color="white"
+        )
+        self.options_button.pack(pady=20)
 
         # Redimensionar la imagen al tamaño de la ventana
         self.bind("<Configure>", self.resize_background)
 
         self.update_background()
+        self.animate_gif(0)
 
     def update_background(self):
-        if self.original_image is not None:
-            width = self.winfo_width()
-            height = self.winfo_height()
-
-            resized_image = self.original_image.resize((width, height ), Image.LANCZOS)
-            self.background_photo = ImageTk.PhotoImage(resized_image)
-
-            self.background_label.configure(image=self.background_photo)
-            self.background_label.image = self.background_photo  # Mantener una referencia
+        if self.frames:
+            frame = self.frames[0]
+            self.background_label.configure(image=frame)
+            self.background_label.image = frame  # Mantener una referencia
         else:
             print("No se pudo cargar la imagen de fondo.")  # Mensaje de error si la imagen no se carga
 
-
     def resize_background(self, event):
         self.update_background()
+
+    def animate_gif(self, frame_index):
+        if self.frames:
+            frame = self.frames[frame_index]
+            self.background_label.configure(image=frame)
+            self.after(100, self.animate_gif, (frame_index + 1) % len(self.frames))
 
     def play(self):
         self.withdraw()  # Oculta el menú principal
@@ -151,7 +193,7 @@ class OptionsWindow(ctk.CTkToplevel):
 
         # Configuración de la ventana
         self.title("Opciones")
-        self.geometry("1080x720")
+        self.geometry("1280x720")
         self.iconbitmap("./images/icono_juego.ico")
 
         # Cargar la imagen de fondo de la ventana de opciones
@@ -192,10 +234,7 @@ class OptionsWindow(ctk.CTkToplevel):
     def on_close(self):
         self.destroy()  # Cierra la ventana de opciones
         self.master.deiconify()  # Muestra
-
-if __name__ == "__main__":
-    app = MainMenu()
-    app.mainloop()
+        
 
 if __name__ == "__main__":
     app = MainMenu()

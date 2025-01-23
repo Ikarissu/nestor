@@ -12,13 +12,52 @@ from config import (
     Hover_Menu_color_easy, Hover_Menu_color_medium, Hover_Menu_color_hard
 )
 
+class SelectSymbol(tk.Toplevel):
+    def __init__(self, parent, difficulty, on_symbol_selected):
+        super().__init__(parent)
+        self.geometry("300x200")
+        self.iconbitmap("./images/icono_juego.ico")
+        self.title("Seleccionar Ficha")
+
+        # Deshabilitar la opción de maximizar la ventana
+        self.resizable(False, False)
+
+        # Fijar el tamaño mínimo y máximo de la ventana
+        self.minsize(300, 200)
+        self.maxsize(300, 200)
+
+        label = tk.Label(self, text="Selecciona tu Ficha", font=("Helvetica", 12))
+        label.pack(pady=10)
+
+        self.difficulty = difficulty
+        self.on_symbol_selected = on_symbol_selected
+
+        if difficulty == "medium":
+            tk.Button(self, text="Y", command=lambda: self.close_game("Y")).pack(pady=5)
+            tk.Button(self, text="Z", command=lambda: self.close_game("Z")).pack(pady=5)
+        elif difficulty == "hard":
+            tk.Button(self, text="S", command=lambda: self.close_game("S")).pack(pady=5)
+            tk.Button(self, text="M", command=lambda: self.close_game("M")).pack(pady=5)
+        else:
+            tk.Button(self, text="X", command=lambda: self.close_game("X")).pack(pady=5)
+            tk.Button(self, text="O", command=lambda: self.close_game("O")).pack(pady=5)
+
+    def close_game(self, symbol):
+        self.on_symbol_selected(symbol)
 class design_master_form(tk.Toplevel):
     def __init__(self, difficulty, player_symbol, computer_symbol):
         super().__init__()
         self.title('Choclo Game')
         self.geometry("1280x720")
         self.iconbitmap("./images/icono_juego.ico")
-        
+
+        # Deshabilitar la opción de maximizar la ventana
+        self.resizable(False, False)
+
+        # Fijar el tamaño mínimo y máximo de la ventana
+        self.minsize(1280, 720)
+        self.maxsize(1280, 720)
+
         self.difficulty = difficulty
         self.player_symbol = player_symbol
         self.computer_symbol = computer_symbol
@@ -36,6 +75,7 @@ class design_master_form(tk.Toplevel):
         # Declarar self.perfil
         self.perfil = useful_img.read_image("./images/jugador.png", (100, 100))
 
+        
         # Ajustar colores según la dificultad
         if self.difficulty == "easy":
             self.Top_Bar_color = Top_Bar_color_easy
@@ -52,13 +92,13 @@ class design_master_form(tk.Toplevel):
             self.Sidebar_color = Sidebar_color_hard
             self.Main_Body_color = Main_Body_color_hard
             self.Hover_Menu_color = Hover_Menu_color_hard
-
+            
         self.create_widgets()
         self.updateBoard()
 
     def create_widgets(self):
         # Cargar la imagen de fondo
-        self.original_image = Image.open("./images/img4.jpg")
+        self.original_image = Image.open("./images/habitacion.gif")
         self.background_photo = ImageTk.PhotoImage(self.original_image)
 
         self.background_label = tk.Label(self, image=self.background_photo)
@@ -93,11 +133,8 @@ class design_master_form(tk.Toplevel):
 
         font_awesome = font.Font(family='fontAwesome', size=12)
 
-        self.titleLabel = tk.Label(top_bar, text="Tic Tac Toe", font=("Arial", 24), bg=self.Top_Bar_color, fg="white")
-        self.titleLabel.pack(pady=10)
-
         self.labelTitle = tk.Label(top_bar, text="Choclo game")
-        self.labelTitle.config(fg="#fff", font=("Roboto", 15), bg=self.Top_Bar_color, pady=10, width=16)
+        self.labelTitle.config(fg="#fff", font=("Helvetica", 15), bg=self.Top_Bar_color, pady=10, width=16)
         self.labelTitle.pack(side=tk.LEFT)
 
         self.buttonsidebar = tk.Button(top_bar, text="\uf0c9", font=font_awesome,
@@ -105,7 +142,7 @@ class design_master_form(tk.Toplevel):
         self.buttonsidebar.pack(side=tk.LEFT)
 
         self.labelTitle = tk.Label(top_bar, text="¡Bienvenido a choclo game!")
-        self.labelTitle.config(fg="#fff", font=("Roboto", 15), bg=self.Top_Bar_color, padx=20, width=20)
+        self.labelTitle.config(fg="#fff", font=("Helvetica", 15), bg=self.Top_Bar_color, padx=20, width=20)
         self.labelTitle.pack(side=tk.RIGHT)
 
     def side_bar_controls(self, main_frame):
