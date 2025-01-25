@@ -188,11 +188,10 @@ def game_window():
         bestMove = None
         if difficulty == "easy":
             while True:
-                r = random.randrange(1, len(board.keys()))
+                r = random.randrange(1, 10) 
                 if board[r] == " ":
                     board[r] = computer_symbol
-                if buttons[r-1]["text"] == " ":
-                    break
+                    break  
         
         elif difficulty == "hard":
             bestScore = -100
@@ -220,7 +219,7 @@ def game_window():
                     if score > bestScore: 
                         bestScore = score 
                         bestMove = key
-        board[bestMove] = computer_symbol
+            board[bestMove] = computer_symbol
 
         updateBoard()
 
