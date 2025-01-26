@@ -8,7 +8,6 @@ import random
 from config import (
     Top_Bar_color_easy, Top_Bar_color_medium, Top_Bar_color_hard,
     Sidebar_color_easy, Sidebar_color_medium, Sidebar_color_hard,
-    Main_Body_color_easy, Main_Body_color_medium, Main_Body_color_hard,
     Hover_Menu_color_easy, Hover_Menu_color_medium, Hover_Menu_color_hard
 )
 
@@ -51,17 +50,14 @@ class design_master_form(tk.Toplevel):
         if self.difficulty == "easy":
             self.Top_Bar_color = Top_Bar_color_easy
             self.Sidebar_color = Sidebar_color_easy
-            self.Main_Body_color = Main_Body_color_easy
             self.Hover_Menu_color = Hover_Menu_color_easy
         elif self.difficulty == "medium":
             self.Top_Bar_color = Top_Bar_color_medium
             self.Sidebar_color = Sidebar_color_medium
-            self.Main_Body_color = Main_Body_color_medium
             self.Hover_Menu_color = Hover_Menu_color_medium
         elif self.difficulty == "hard":
             self.Top_Bar_color = Top_Bar_color_hard
             self.Sidebar_color = Sidebar_color_hard
-            self.Main_Body_color = Main_Body_color_hard
             self.Hover_Menu_color = Hover_Menu_color_hard
             
         self.create_widgets()
@@ -137,10 +133,6 @@ class design_master_form(tk.Toplevel):
         self.labelTitle.config(fg="#fff", font=("Helvetica", 15), bg=self.Top_Bar_color, pady=10, width=16)
         self.labelTitle.pack(side=tk.LEFT)
 
-        self.buttonsidebar = tk.Button(top_bar, text="\uf0c9", font=font_awesome,
-                                       command=self.toggle_panel, bd=0, bg=self.Top_Bar_color, fg="white")
-        self.buttonsidebar.pack(side=tk.LEFT)
-
         self.labelTitle = tk.Label(top_bar, text="¡Bienvenido a choclo game!")
         self.labelTitle.config(fg="#fff", font=("Helvetica", 15), bg=self.Top_Bar_color, padx=20, width=20)
         self.labelTitle.pack(side=tk.RIGHT)
@@ -167,8 +159,8 @@ class design_master_form(tk.Toplevel):
         self.score_label.pack(pady=10)
 
         buttons_info = [
-            ("Reiniciar Partida", "\uf0ad", self.buttonReset),
-            ("Volver al Menú", "\uf0ad", self.buttonMenu)
+            ("Reiniciar Partida", "\u21BB", self.buttonReset),
+            ("Volver al Menú", "\u21A9", self.buttonMenu)
         ]
 
         for text, icon, button in buttons_info:
@@ -189,12 +181,6 @@ class design_master_form(tk.Toplevel):
 
     def on_leave(self, event, button):
         button.config(bg=self.Sidebar_color, fg='white')
-
-    def toggle_panel(self):
-        if self.side_bar.winfo_ismapped():
-            self.side_bar.pack_forget()
-        else:
-            self.side_bar.pack(side=tk.LEFT, fill='y')
 
     def updateBoard(self):
         for key in self.board.keys():

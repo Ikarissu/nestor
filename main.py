@@ -71,7 +71,7 @@ class MainMenu(ctk.CTk):
 
         # Cargar la imagen de fondo del menú
         try:
-            self.original_image = Image.open("./images/habitacion.gif")
+            self.original_image = Image.open("./images/fondo_menu.gif")
             self.frames = [ImageTk.PhotoImage(img.copy().resize((1280, 720), Image.LANCZOS)) for img in ImageSequence.Iterator(self.original_image)]
         except Exception as e:
             print(f"Error al cargar la imagen: {e}")
@@ -198,9 +198,15 @@ class OptionsWindow(ctk.CTkToplevel):
         self.iconbitmap("./images/icono_juego.ico")
 
         # Cargar la imagen de fondo de la ventana de opciones
-        self.original_image = Image.open("./images/img2.jpg")  
+        try:
+            self.original_image = Image.open("./images/fondo_menu.gif")
+            self.frames = [ImageTk.PhotoImage(img.copy().resize((1280, 720), Image.LANCZOS)) for img in ImageSequence.Iterator(self.original_image)]
+        except Exception as e:
+            print(f"Error al cargar la imagen: {e}")
+            self.frames = []
+
         self.background_label = tk.Label(self)
-        self.background_label.place(x=0, y=0, relwidth=1, relheight=1) 
+        self.background_label.place(x=0, y=0, relwidth=1, relheight=1)  
 
         self.bind("<Configure>", self.resize_background)
 
