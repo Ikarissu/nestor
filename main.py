@@ -81,7 +81,7 @@ class MainMenu(ctk.CTk):
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)  
 
         # Título
-        self.title_label = ctk.CTkLabel(self, text="TIC TAC TOE", font=("Roboto", 70), text_color="white", bg_color="#6a0000", padx=30)
+        self.title_label = ctk.CTkLabel(self, text="TIC TAC TOE", font=("Helvetica", 70), text_color="white", bg_color="#6a0000", padx=30)
         self.title_label.pack(pady=(100, 20))
         self.configure(bg="#6a0000")
                         

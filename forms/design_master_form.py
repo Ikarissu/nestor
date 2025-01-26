@@ -84,7 +84,7 @@ class design_master_form(tk.Toplevel):
 
     def create_widgets(self):
         # Cargar la imagen de fondo
-        self.original_image = Image.open("./images/habitacion.gif")
+        self.original_image = Image.open("./images/fondo_menu.gif")
         self.background_photo = ImageTk.PhotoImage(self.original_image)
 
         self.background_label = tk.Label(self, image=self.background_photo)
