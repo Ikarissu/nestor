@@ -10,6 +10,7 @@ ctk.set_appearance_mode("dark")  # Opciones: "light", "dark", "system"
 ctk.set_default_color_theme("blue")  # Cambia el tema de color
 
 class SelectDifficulty(tk.Toplevel):
+    
     def __init__(self, parent, on_difficulty_selected):
         super().__init__(parent)
         self.geometry("300x200")
