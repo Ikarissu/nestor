@@ -120,7 +120,7 @@ class design_master_form(tk.Toplevel):
 
         self.buttons = []
         for i in range(9):
-            button = tk.Button(game_frame, text="", font=("Arial", 24), width=5, height=2,
+            button = tk.Button(game_frame, text="", font=("Helvetica", 24), width=5, height=2,
                                command=lambda i=i: self.on_button_click(i))
             button.grid(row=i // 3, column=i % 3, padx=5, pady=5)
             self.buttons.append(button)
@@ -149,31 +149,26 @@ class design_master_form(tk.Toplevel):
         side_bar = tk.Frame(main_frame, bg=self.Sidebar_color, width=200)
         side_bar.pack(side=tk.LEFT, fill=tk.Y)
 
-        self.score_label = tk.Label(side_bar, text=f"Jugador: {self.player_score}\nComputadora: {self.computer_score}\nEmpates: {self.empate_score}", font=("Arial", 16), bg="gray", fg="white")
-        self.score_label.pack(pady=20)
-
-        reset_button = tk.Button(side_bar, text="Reiniciar", command=self.resetGame, font=("Arial", 16), bg=self.Sidebar_color)
-        reset_button.pack(pady=10)
-
         width_menu = 20
         height_menu = 2
         font_awesome = font.Font(family='FontAwesome', size=12)
 
         self.labelperfil = tk.Label(side_bar, image=self.perfil, bg=self.Sidebar_color)
-        self.labelperfil.pack(side=tk.TOP, pady=10)
+        self.labelperfil.pack(side=tk.TOP, pady=15)
 
         self.buttonScore = tk.Button(side_bar)
         self.buttonProfile = tk.Button(side_bar)
         self.buttonPicture = tk.Button(side_bar)
         self.buttonInfo = tk.Button(side_bar)
-        self.buttonMenu = tk.Button(side_bar, text="Volver al menú", command=self.open_menu)
+        self.buttonMenu = tk.Button(side_bar, text="Volver al Menú", command=self.open_menu)
+        self.buttonReset = tk.Button(side_bar, text="Reiniciar Partida", command=self.resetGame)
+        
+        self.score_label = tk.Label(side_bar, text=f"Partidas Ganadas: {self.player_score}\nPartidas Perdidas: {self.computer_score}\nPartidas Empatadas: {self.empate_score}",pady=10, font=("Helvetica", 12), bg=self.Sidebar_color, fg="white")
+        self.score_label.pack(pady=10)
 
         buttons_info = [
-            ("Puntuación", "\uf080", self.buttonScore),
-            ("Perfil", "\uf1de", self.buttonProfile),
-            ("Cambiar Imagen", "\uf03e", self.buttonPicture),
-            ("Acerca de+", "\uf05a", self.buttonInfo),
-            ("Volver al menú", "\uf0ad", self.buttonMenu)
+            ("Reiniciar Partida", "\uf0ad", self.buttonReset),
+            ("Volver al Menú", "\uf0ad", self.buttonMenu)
         ]
 
         for text, icon, button in buttons_info:
@@ -342,9 +337,9 @@ class design_master_form(tk.Toplevel):
             self.turn = self.player_symbol
         self.waiting_for_computer = False
         self.enable_buttons()
-
+        
     def update_score_label(self):
-        self.score_label.config(text=f"Jugador: {self.player_score}\nComputadora: {self.computer_score}\nEmpates: {self.empate_score}")
+        self.score_label.config(text=f"Partidas Ganadas: {self.player_score}\nPartidas Perdidas: {self.computer_score}\nPartidas Empatadas: {self.empate_score}")
 
     def disable_buttons(self):
         for button in self.buttons:

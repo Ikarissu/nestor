@@ -66,7 +66,7 @@ class MainMenu(ctk.CTk):
         self.geometry("1280x720")
         self.resizable(False, False)
         self.maxsize(1280, 720)
-        self.iconbitmap("")
+        self.iconbitmap("./images/icono_juego.ico")
 
         # Cargar la imagen de fondo del menú
         try:
@@ -80,9 +80,9 @@ class MainMenu(ctk.CTk):
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)  
 
         # Título
-        self.title_label = ctk.CTkLabel(self, text="CHOCLO GAME", font=("Times New Roman", 70), text_color="white", bg_color="transparent")
+        self.title_label = ctk.CTkLabel(self, text="TIC TAC TOE", font=("Roboto", 70), text_color="white", bg_color="#6a0000", padx=30)
         self.title_label.pack(pady=(100, 20))
-        self.configure(bg="transparent")
+        self.configure(bg="#6a0000")
                         
         
         # Botones
@@ -92,11 +92,11 @@ class MainMenu(ctk.CTk):
             command=self.play, 
             width=300, 
             height=80, 
-            fg_color="#0b5345", 
-            hover_color="lightgreen", 
-            font=("Arial", 20),
-            border_color="black", 
-            border_width=2,
+            fg_color="#c60030", 
+            hover_color="#d23359", 
+            font=("Helvetica", 20),
+            border_color="#6a0000", 
+            border_width=3,
             text_color="white"
         )
         self.play_button.pack(pady=20)
@@ -107,11 +107,11 @@ class MainMenu(ctk.CTk):
             command=self.open_options, 
             width=300, 
             height=80, 
-            fg_color="#0b5345", 
-            hover_color="lightgreen", 
-            font=("Arial", 20),
-            border_color="black", 
-            border_width=2,
+            fg_color="#c60030", 
+            hover_color="#d23359", 
+            font=("Helvetica", 20),
+            border_color="#6a0000", 
+            border_width=3,
             text_color="white"
         )
         self.options_button.pack(pady=20)
@@ -122,11 +122,11 @@ class MainMenu(ctk.CTk):
             command=self.quit, 
             width=300, 
             height=80, 
-            fg_color="#0b5345", 
-            hover_color="lightgreen", 
-            font=("Arial", 20),
-            border_color="black", 
-            border_width=2,
+            fg_color="#c60030", 
+            hover_color="#d23359", 
+            font=("Helvetica", 20),
+            border_color="#6a0000", 
+            border_width=3,
             text_color="white"
         )
         self.options_button.pack(pady=20)
@@ -234,7 +234,6 @@ class OptionsWindow(ctk.CTkToplevel):
     def on_close(self):
         self.destroy()  # Cierra la ventana de opciones
         self.master.deiconify()  # Muestra
-        
 
 if __name__ == "__main__":
     app = MainMenu()
