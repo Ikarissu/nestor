@@ -11,6 +11,8 @@ player_symbol = ""
 computer_symbol = ""
 turn = ""
 
+
+
 def select_difficulty():
     global difficulty_window
     difficulty_window = Toplevel(start_window)
@@ -68,7 +70,8 @@ def select_symbol():
         tk.Button(symbol_window, text="O", command=lambda: start_game("O")).pack(pady=5)
 
 def game_window():
-    global root, frame1, frame2, titleLabel, buttons, game_end, waiting_for_computer
+    global root, frame1, frame2, titleLabel, buttons, game_end, waiting_for_computer, canvas1, canvas2
+    global image1_initial, image2_initial, image1_victory, image2_victory, image1_defeat, image2_defeat, image_draw1, image_draw2
 
     root = Toplevel()
     root.geometry("600x600")  # Aumentar el tamaño de la ventana
@@ -87,23 +90,34 @@ def game_window():
     frame2 = Frame(root, bg=bg_color)
     frame2.pack()
 
-    image1 = Image.open("pj.jpg")  # Asegúrate de que la ruta sea correcta
-    new_img = image1.resize((100, 100))
-    new_img.save("pj2.jpg")
-    photo1 = ImageTk.PhotoImage(new_img)
-    image2 = Image.open("chocol1.jpg")  # Asegúrate de que la ruta sea correcta
-    new_img = image2.resize((100, 100))
-    new_img.save("chocol1-2.jpg")
-    photo2 = ImageTk.PhotoImage(new_img)
+    # Redimensionar y cargar las imágenes después de crear la ventana principal
+    # Redimensionar y cargar las imágenes después de crear la ventana principal
+    image1_initial = Image.open("C_Base.jpg").resize((100, 100), Image.Resampling.LANCZOS)
+    image2_initial = Image.open("P_Base.jpg").resize((100, 100), Image.Resampling.LANCZOS)
+    image1_victory = Image.open("C_Gana.jpg").resize((100, 100), Image.Resampling.LANCZOS)
+    image2_victory = Image.open("P_Gana.jpg").resize((100, 100), Image.Resampling.LANCZOS)
+    image1_defeat = Image.open("C_Pierde.jpg").resize((100, 100), Image.Resampling.LANCZOS)
+    image2_defeat = Image.open("P_Pierde.jpg").resize((100, 100), Image.Resampling.LANCZOS)
+    image_draw1 = Image.open("C_Empata.jpg").resize((100, 100), Image.Resampling.LANCZOS)
+    image_draw2 = Image.open("P_Empata.jpg").resize((100, 100), Image.Resampling.LANCZOS)
+
+    image1_initial = ImageTk.PhotoImage(image1_initial)
+    image2_initial = ImageTk.PhotoImage(image2_initial)
+    image1_victory = ImageTk.PhotoImage(image1_victory)
+    image2_victory = ImageTk.PhotoImage(image2_victory)
+    image1_defeat = ImageTk.PhotoImage(image1_defeat)
+    image2_defeat = ImageTk.PhotoImage(image2_defeat)
+    image_draw1 = ImageTk.PhotoImage(image_draw1)
+    image_draw2 = ImageTk.PhotoImage(image_draw2)
 
     canvas1 = Canvas(frame2, width=100, height=100)  # Ajusta el tamaño según tus imágenes
     canvas1.grid(row=1, column=0)
     canvas2 = Canvas(frame2, width=100, height=100)
     canvas2.grid(row=1, column=5)
 
-    # Crear imágenes en los canvas
-    canvas1.create_image(50, 50, image=photo1)
-    canvas2.create_image(50, 50, image=photo2)
+    # Inicializar imágenes en los canvas
+    canvas1.create_image(50, 50, image=image1_initial)
+    canvas2.create_image(50, 50, image=image2_initial)
 
     global board
     board = {i: " " for i in range(1, 10)}
@@ -112,6 +126,21 @@ def game_window():
     game_end = False
     waiting_for_computer = False
     mode = "singlePlayer"
+
+    def update_images(result):
+        if result == "victory":
+            canvas1.create_image(50, 50, image=image1_victory)
+            canvas2.create_image(50, 50, image=image2_defeat)
+        elif result == "defeat":
+            canvas1.create_image(50, 50, image=image1_defeat)
+            canvas2.create_image(50, 50, image=image2_victory)
+        elif result == "draw":
+            canvas1.create_image(50, 50, image=image_draw1)
+            canvas2.create_image(50, 50, image=image_draw2)
+        elif result == "initial":
+            canvas1.create_image(50, 50, image=image1_initial)
+            canvas2.create_image(50, 50, image=image2_initial)
+
 
     def updateBoard():
         for key in board.keys():
@@ -143,6 +172,7 @@ def game_window():
         board = {i: " " for i in range(1, 10)}
         updateBoard()
         titleLabel.config(text="Tic Tac Toe")
+        update_images("initial")  # Resetear imágenes a las iniciales
         turn = player_symbol
         enable_buttons()
 
@@ -237,13 +267,16 @@ def game_window():
             if checkForWin(turn):
                 if turn == player_symbol:
                     player_score += 1
+                    update_images("victory")
                 else:
                     computer_score += 1
+                    update_images("defeat")
                 update_score_label()
                 titleLabel.config(text=f"{turn} gana el juego")
                 game_end = True
             elif checkForDraw():
                 empate_score += 1
+                update_images("draw")
                 update_score_label()
                 titleLabel.config(text="Empate")
                 game_end = True
@@ -261,9 +294,11 @@ def game_window():
             computer_score += 1
             update_score_label()
             titleLabel.config(text=f"{computer_symbol} gana el juego")
+            update_images("defeat")
             game_end = True
         elif checkForDraw():
             empate_score += 1
+            update_images("draw")
             update_score_label()
             titleLabel.config(text="Empate")
             game_end = True
