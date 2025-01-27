@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import *
+from tkinter import messagebox
 import customtkinter as ctk
 from forms.design_master_form import design_master_form
 from PIL import Image, ImageTk, ImageSequence
@@ -57,6 +57,7 @@ class SelectSymbol(ctk.CTkToplevel):
     def close_game(self, symbol):
         self.on_symbol_selected(symbol)
         self.destroy()
+        self.master.start_game()  # Llamar al método start_game de MainMenu
 
 class MainMenu(ctk.CTk):
     def __init__(self):
@@ -178,7 +179,6 @@ class MainMenu(ctk.CTk):
             self.computer_symbol = "Y" if symbol == "Z" else "Z"
         elif self.difficulty == "hard":
             self.computer_symbol = "M" if symbol == "S" else "S"
-        self.start_game()
 
     def start_game(self):
         # Cargar música según la dificultad
