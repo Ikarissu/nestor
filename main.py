@@ -4,6 +4,7 @@ import customtkinter as ctk
 from forms.design_master_form import design_master_form
 from PIL import Image, ImageTk, ImageSequence
 import customtkinter as ctk
+import pygame 
 
 # Configuración de la apariencia de CustomTkinter
 ctk.set_appearance_mode("dark")  # Opciones: "light", "dark", "system"
@@ -58,10 +59,18 @@ class SelectSymbol(tk.Toplevel):
 
     def close_game(self, symbol):
         self.on_symbol_selected(symbol)
+        self.destroy()
         
 class MainMenu(ctk.CTk):
     def __init__(self):
         super().__init__()
+
+        # Música de fondo----------------------
+        pygame.mixer.init()
+        pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")  
+        pygame.mixer.music.play(-1)  
+        pygame.mixer.music.set_volume(0.4)  
+
 
         self.title("Choclo Game")
         self.geometry("1280x720")
@@ -156,6 +165,7 @@ class MainMenu(ctk.CTk):
             self.after(100, self.animate_gif, (frame_index + 1) % len(self.frames))
 
     def play(self):
+        pygame.mixer.music.stop()  # Detener la música de fondo
         self.withdraw()  # Oculta el menú principal
         self.select_difficulty()
 
@@ -180,13 +190,33 @@ class MainMenu(ctk.CTk):
         self.start_game()
 
     def start_game(self):
-        self.destroy()
+        # Cargar música según la dificultad
+        if self.difficulty == "easy":
+            self.original_music = "./music/Ghostbusters 8 Bit.mp3"
+        elif self.difficulty == "medium":
+            self.original_music = "./music/Blue Da Ba Dee 8 Bit.mp3"
+        elif self.difficulty == "hard":
+            self.original_music = "./music/Take On Me 8 Bit.mp3"
+        
+        pygame.mixer.music.load(self.original_music)  # Cargar la música de la dificultad
+        pygame.mixer.music.play(-1) 
+        pygame.mixer.music.set_volume(0.4)  
         game_window = design_master_form(self.difficulty, self.player_symbol, self.computer_symbol)
         game_window.mainloop()
 
     def open_options(self):
-        self.withdraw()  # Oculta la ventana principal
-        options_window = OptionsWindow(self)  # Abre la ventana de opciones
+        pygame.mixer.music.stop()  
+        pygame.mixer.music.load("./music/Sugar Were Goin Down 8 Bit.mp3")  
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.4)    
+        self.withdraw()  
+        options_window = OptionsWindow(self) 
+
+    def restart_menu_music(self):
+        pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")  
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.4)    
+
 
 class OptionsWindow(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -235,12 +265,16 @@ class OptionsWindow(ctk.CTkToplevel):
         self.background_label.image = self.background_photo  # Mantener una referencia a la imagen
 
     def on_back(self):
-        self.destroy()  # Cierra la ventana de opciones
-        self.master.deiconify()  # Muestra de nuevo la ventana principal
+        self.destroy() 
+        self.master.deiconify() 
+        self.master.restart_menu_music()  
 
     def on_close(self):
-        self.destroy()  # Cierra la ventana de opciones
-        self.master.deiconify()  # Muestra
+        pygame.mixer.music.stop()  
+        self.destroy()  
+        self.master.deiconify()  
+        self.master.restart_menu_music() 
+
 
 if __name__ == "__main__":
     app = MainMenu()
