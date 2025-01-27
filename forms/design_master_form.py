@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import useful.useful_image as useful_img
 import useful.useful_window as useful_window
 import random
+import pygame
 
 from config import (
     Top_Bar_color_easy, Top_Bar_color_medium, Top_Bar_color_hard,
@@ -62,6 +63,18 @@ class design_master_form(tk.Toplevel):
             
         self.create_widgets()
         self.updateBoard()
+    
+    def play_losing_music(self):
+        pygame.mixer.music.load("./music/The Sound of Silence 8 Bit.mp3")  
+        pygame.mixer.music.play(-1)
+    
+    def play_wining_music(self):
+        pygame.mixer.music.load("./music/Sweet Child O Mine 8 Bit.mp3")  
+        pygame.mixer.music.play(-1)
+
+    def play_original_music(self):
+        pygame.mixer.music.load(self.master.original_music)  
+        pygame.mixer.music.play(-1)  
 
     def load_images(self):
         self.image1_initial = Image.open("./images/C_Base.png").resize((100, 100), Image.Resampling.LANCZOS)
@@ -206,6 +219,7 @@ class design_master_form(tk.Toplevel):
         return False
 
     def resetGame(self):
+        self.play_original_music()  
         self.game_end = False
         self.waiting_for_computer = False
         self.board = {i: " " for i in range(1, 10)}
@@ -296,6 +310,7 @@ class design_master_form(tk.Toplevel):
                 if self.turn == self.player_symbol:
                     self.player_score += 1
                     self.update_images("victory")
+                    self.play_wining_music()  
                 else:
                     self.computer_score += 1
                     self.update_images("defeat")
@@ -322,6 +337,7 @@ class design_master_form(tk.Toplevel):
             self.update_score_label()
             self.labelTitle.config(text=f"{self.computer_symbol} gana el juego")
             self.update_images("defeat")
+            self.play_losing_music()  
             self.game_end = True
         elif self.checkForDraw():
             self.empate_score += 1
@@ -367,5 +383,7 @@ class design_master_form(tk.Toplevel):
         self.background_label.config(image=self.background_photo)
 
     def open_menu(self):
-        self.destroy()  # Cierra la ventana actual
-        self.master.deiconify()  # Muestra el menú
+        pygame.mixer.music.stop()  # Detener la música del juego
+        self.master.restart_menu_music()  # Reiniciar la música del menú
+        self.destroy()  
+        self.master.deiconify()   
