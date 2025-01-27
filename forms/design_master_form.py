@@ -13,7 +13,6 @@ from config import (
 )
 
 class design_master_form(tk.Toplevel):
-    
     def __init__(self, difficulty, player_symbol, computer_symbol):
         super().__init__()
         self.title('Choclo Game')
