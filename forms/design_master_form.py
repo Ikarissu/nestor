@@ -45,20 +45,23 @@ class design_master_form(tk.Toplevel):
 
         # Cargar las imágenes
         self.load_images()
-
-        # Ajustar colores según la dificultad
+        
+        # Ajustar colores y fondo según la dificultad
         if self.difficulty == "easy":
             self.Top_Bar_color = Top_Bar_color_easy
             self.Sidebar_color = Sidebar_color_easy
             self.Hover_Menu_color = Hover_Menu_color_easy
+            self.background_image_path = "./images/fondo_facil.gif"
         elif self.difficulty == "medium":
             self.Top_Bar_color = Top_Bar_color_medium
             self.Sidebar_color = Sidebar_color_medium
             self.Hover_Menu_color = Hover_Menu_color_medium
+            self.background_image_path = "./images/fondo_medio.gif"
         elif self.difficulty == "hard":
             self.Top_Bar_color = Top_Bar_color_hard
             self.Sidebar_color = Sidebar_color_hard
             self.Hover_Menu_color = Hover_Menu_color_hard
+            self.background_image_path = "./images/fondo_dificil.gif"
             
         self.create_widgets()
         self.updateBoard()
@@ -96,8 +99,11 @@ class design_master_form(tk.Toplevel):
 
     def create_widgets(self):
         # Cargar la imagen de fondo
-        self.original_image = Image.open("./images/fondo_menu.gif")
+        self.original_image = Image.open(self.background_image_path)
         self.background_photo = ImageTk.PhotoImage(self.original_image)
+
+        self.background_label = tk.Label(self, image=self.background_photo)
+        self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         self.background_label = tk.Label(self, image=self.background_photo)
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
