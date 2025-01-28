@@ -12,31 +12,35 @@ ctk.set_default_color_theme("blue")  # Cambia el tema de color
 
 class SelectDifficulty(ctk.CTkFrame):
     def __init__(self, parent, on_difficulty_selected):
-        super().__init__(parent)
+        super().__init__(parent, fg_color="transparent")  # Establecer el fondo del frame como transparente
         self.pack(pady=20)
 
-        label = ctk.CTkLabel(self, text="Selecciona la Dificultad", font=("Helvetica", 16))
+        label = ctk.CTkLabel(self, text="Selecciona la Dificultad", font=("Helvetica", 26), text_color="white")  # Establecer el color del texto como negro
         label.pack(pady=10)
 
         self.on_difficulty_selected = on_difficulty_selected
 
-        easy_button = ctk.CTkButton(self, text="Fácil", command=lambda: self.set_difficulty("easy"), width=200, height=40, fg_color="#4CAF50", hover_color="#45A049")
-        easy_button.pack(pady=5)
-        medium_button = ctk.CTkButton(self, text="Medio", command=lambda: self.set_difficulty("medium"), width=200, height=40, fg_color="#9C27B0", hover_color="#8E24AA")
-        medium_button.pack(pady=5)
-        hard_button = ctk.CTkButton(self, text="Difícil", command=lambda: self.set_difficulty("hard"), width=200, height=40, fg_color="#F44336", hover_color="#E53935")
-        hard_button.pack(pady=5)
+        easy_button = ctk.CTkButton(self, text="Fácil", command=lambda: self.set_difficulty("easy"), width=500, height=80, fg_color="transparent", hover_color="#45A049")
+        easy_button.pack(pady=10)
+        medium_button = ctk.CTkButton(self, text="Medio", command=lambda: self.set_difficulty("medium"), width=500, height=80, fg_color="transparent", hover_color="#8E24AA")
+        medium_button.pack(pady=10)
+        hard_button = ctk.CTkButton(self, text="Difícil", command=lambda: self.set_difficulty("hard"), width=500, height=80, fg_color="transparent", hover_color="#E53935")
+        hard_button.pack(pady=10)
 
     def set_difficulty(self, selected_difficulty):
         self.on_difficulty_selected(selected_difficulty)
         messagebox.showinfo("Dificultad Seleccionada", f"Has seleccionado la dificultad: {selected_difficulty.capitalize()}")
+# ...existing code...
 
 class SelectSymbol(ctk.CTkToplevel):
     def __init__(self, parent, difficulty, on_symbol_selected):
         super().__init__(parent)
-        self.geometry("300x200")
+        self.geometry("300x300")
         self.iconbitmap("./images/icono_juego.ico")
         self.title("Seleccionar Ficha")
+
+        # Eliminar los botones de minimizar y maximizar
+        self.overrideredirect(True)
 
         label = ctk.CTkLabel(self, text="Selecciona tu Ficha", font=("Helvetica", 16))
         label.pack(pady=10)
@@ -54,26 +58,41 @@ class SelectSymbol(ctk.CTkToplevel):
             ctk.CTkButton(self, text="X", command=lambda: self.close_game("X"), width=200, height=40, fg_color="#4CAF50", hover_color="#45A049").pack(pady=5)
             ctk.CTkButton(self, text="O", command=lambda: self.close_game("O"), width=200, height=40, fg_color="#4CAF50", hover_color="#45A049").pack(pady=5)
 
+        # Botón para volver al menú principal
+        back_button = ctk.CTkButton(self, text="Volver al Menú Principal", command=self.back_to_main_menu, width=200, height=40, fg_color="#607D8B", hover_color="#546E7A")
+        back_button.pack(pady=10)
+
     def close_game(self, symbol):
         self.on_symbol_selected(symbol)
         self.destroy()
         self.master.start_game()  # Llamar al método start_game de MainMenu
 
+    def close_window(self):
+        self.destroy()
+
+    def back_to_main_menu(self):
+        self.destroy()
+        self.master.deiconify()  # Mostrar la ventana principal
+
+# ...existing code...
+
+
 class MainMenu(ctk.CTk):
     def __init__(self):
         super().__init__()
-
+        
         # Música de fondo----------------------
         pygame.mixer.init()
         pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.4)
-
+        
         self.title("Choclo Game")
         self.geometry("1280x720")
         self.resizable(False, False)
         self.maxsize(1280, 720)
         self.iconbitmap("./images/icono_juego.ico")
+        self.attributes('-toolwindow', True)  # Deshabilitar minimizar y maximizar
 
         # Establecer la dificultad por defecto a "fácil"
         self.difficulty = "easy"
@@ -207,6 +226,9 @@ class MainMenu(ctk.CTk):
         pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.4)
+        
+        def close_window(self):
+            self.destroy()
 
 class OptionsWindow(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -216,7 +238,11 @@ class OptionsWindow(ctk.CTkToplevel):
         self.title("Opciones")
         self.geometry("1280x720")
         self.iconbitmap("./images/icono_juego.ico")
-
+        # Eliminar los botones de minimizar y maximizar
+        self.overrideredirect(True)
+                # Crear un botón de cerrar
+        close_button = ctk.CTkButton(self, text="Cerrar", command=self.close_window)
+        close_button.pack(pady=10, padx=10, anchor='ne')
         # Cargar la imagen de fondo de la ventana de opciones
         try:
             self.original_image = Image.open("./images/fondo_menu.gif")
@@ -232,7 +258,7 @@ class OptionsWindow(ctk.CTkToplevel):
 
         self.update_background()
 
-        self.options_label = ctk.CTkLabel(self, text="Esta es la pantalla de OPCIONES", font=("Arial", 30))
+        self.options_label = ctk.CTkLabel(self, text="Opciones del Juego", font=("Arial", 50))
         self.options_label.pack(pady=20)
 
         self.difficulty_frame = SelectDifficulty(self, self.on_difficulty_selected)
@@ -270,7 +296,10 @@ class OptionsWindow(ctk.CTkToplevel):
         self.destroy()
         self.master.deiconify()
         self.master.restart_menu_music()
-
+        
+    def close_window(self):
+        self.destroy()
+        
 if __name__ == "__main__":
     app = MainMenu()
     app.mainloop()

@@ -18,6 +18,7 @@ class design_master_form(tk.Toplevel):
         self.title('Choclo Game')
         self.geometry("1280x720")
         self.iconbitmap("./images/icono_juego.ico")
+        self.attributes('-toolwindow', True)  # Deshabilitar minimizar y maximizar
 
         # Deshabilitar la opción de maximizar la ventana
         self.resizable(False, False)
@@ -119,7 +120,7 @@ class design_master_form(tk.Toplevel):
         self.side_bar_controls(main_frame)
 
         # Crear el marco del juego
-        game_frame = tk.Frame(main_frame, bg="white")
+        game_frame = tk.Frame(main_frame, bg="")
         game_frame.pack(expand=True)
 
         self.buttons = []
