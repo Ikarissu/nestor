@@ -130,16 +130,6 @@ class design_master_form(tk.Toplevel):
             button.grid(row=i // 3, column=i % 3, padx=5, pady=5)
             self.buttons.append(button)
 
-        # Añadir los Canvas para las imágenes
-        self.canvas1 = tk.Canvas(game_frame, width=100, height=100)
-        self.canvas1.grid(row=0, column=3)
-        self.canvas2 = tk.Canvas(game_frame, width=100, height=100)
-        self.canvas2.grid(row=0, column=4)
-
-        # Inicializar imágenes en los canvas
-        self.canvas1.create_image(50, 50, image=self.image1_initial)
-        self.canvas2.create_image(50, 50, image=self.image2_initial)
-
         self.bind("<Configure>", self.resize_background)
 
     def top_bar_controls(self, main_frame):
@@ -166,6 +156,16 @@ class design_master_form(tk.Toplevel):
 
         self.labelperfil = tk.Label(side_bar, image=self.perfil, bg=self.Sidebar_color)
         self.labelperfil.pack(side=tk.TOP, pady=15)
+        
+        # Añadir los Canvas para las imágenes en la sidebar
+        self.canvas1 = tk.Canvas(side_bar, width=100, height=100, bg=self.Sidebar_color, highlightthickness=0)
+        self.canvas1.pack(side=tk.TOP, pady=5)
+        self.canvas2 = tk.Canvas(side_bar, width=100, height=100, bg=self.Sidebar_color, highlightthickness=0)
+        self.canvas2.pack(side=tk.TOP, pady=5)
+        
+        # Inicializar imágenes en los canvas
+        self.canvas1.create_image(50, 50, image=self.image1_initial)
+        self.canvas2.create_image(50, 50, image=self.image2_initial)
 
         self.buttonScore = tk.Button(side_bar)
         self.buttonProfile = tk.Button(side_bar)
@@ -358,15 +358,23 @@ class design_master_form(tk.Toplevel):
 
     def update_images(self, result):
         if result == "victory":
+            self.canvas1.delete("all")
+            self.canvas2.delete("all")
             self.canvas1.create_image(50, 50, image=self.image1_victory)
             self.canvas2.create_image(50, 50, image=self.image2_defeat)
         elif result == "defeat":
+            self.canvas1.delete("all")
+            self.canvas2.delete("all")
             self.canvas1.create_image(50, 50, image=self.image1_defeat)
             self.canvas2.create_image(50, 50, image=self.image2_victory)
         elif result == "draw":
+            self.canvas1.delete("all")
+            self.canvas2.delete("all")
             self.canvas1.create_image(50, 50, image=self.image_draw1)
             self.canvas2.create_image(50, 50, image=self.image_draw2)
         elif result == "initial":
+            self.canvas1.delete("all")
+            self.canvas2.delete("all")
             self.canvas1.create_image(50, 50, image=self.image1_initial)
             self.canvas2.create_image(50, 50, image=self.image2_initial)
 

@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
 import customtkinter as ctk
+from customtkinter import CTkImage
 from forms.design_master_form import design_master_form
 from PIL import Image, ImageTk, ImageSequence, ImageDraw, ImageFilter
-import customtkinter as ctk
 import pygame 
 
 # Configuración de la apariencia de CustomTkinter
@@ -35,6 +35,12 @@ class SelectDifficulty(ctk.CTkFrame):
 class SelectSymbol(ctk.CTkToplevel):
     def __init__(self, parent, difficulty, on_symbol_selected):
         super().__init__(parent)
+        
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.4)
+        
         self.geometry("300x300")
         self.iconbitmap("./images/icono_juego.ico")
         self.title("Seleccionar Ficha")
@@ -195,7 +201,9 @@ class MainMenu(ctk.CTk):
             button_surface = pygame.Surface((width, height), pygame.SRCALPHA)
             button_surface.blit(text_surface, (0, 0))
             pygame.image.save(button_surface, f'{text}_button.png')
-            return ImageTk.PhotoImage(Image.open(f'{text}_button.png'))
+            return CTkImage(light_image=Image.open(f'{text}_button.png'),
+                            dark_image=Image.open(f'{text}_button.png'),
+                            size=(width, height))
 
         # Botones
         self.play_button = ctk.CTkButton(
