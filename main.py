@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import customtkinter as ctk
 from forms.design_master_form import design_master_form
-from PIL import Image, ImageTk, ImageSequence
+from PIL import Image, ImageTk, ImageSequence, ImageDraw, ImageFilter
 import customtkinter as ctk
 import pygame 
 
@@ -87,6 +87,10 @@ class MainMenu(ctk.CTk):
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.4)
         
+        pygame.font.init()
+        
+        arcade_font = pygame.font.Font('./useful/fuente.ttf', 70)
+        
         self.title("Choclo Game")
         self.geometry("1280x720")
         self.resizable(False, False)
@@ -108,20 +112,101 @@ class MainMenu(ctk.CTk):
         self.background_label = tk.Label(self)
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        # Título
-        self.title_label = ctk.CTkLabel(self, text="TIC TAC TOE", font=("Helvetica", 70), text_color="white", bg_color="#6a0000", padx=30)
-        self.title_label.pack(pady=(100, 20))
-        self.configure(bg="#6a0000")
+        # Crear una imagen de fondo difuminada
+        background_image = Image.new('RGBA', (800, 600), (73, 0, 41, 255))
+        background_image = background_image.filter(ImageFilter.GaussianBlur(10))
+
+        # Crear una imagen con bordes redondeados
+        def create_rounded_rectangle(width, height, radius, color):
+            rectangle = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+            draw = ImageDraw.Draw(rectangle)
+            draw.rounded_rectangle((0, 0, width, height), radius, fill=color)
+            return rectangle
+
+        # Crear el fondo redondeado
+        rounded_background = create_rounded_rectangle(820, 620, 50, (73, 0, 41, 255))
+        rounded_background.paste(background_image, (10, 10), background_image)
+
+        # Guardar la imagen temporalmente
+        rounded_background.save('rounded_background.png')
+
+        # Cargar la imagen de fondo redondeada
+        background_photo = ImageTk.PhotoImage(rounded_background)
+
+        # Crear un label para la imagen de fondo
+        self.background_label = tk.Label(self, image=background_photo)
+        self.background_label.image = background_photo  # Guardar una referencia de la imagen
+        self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+        # Renderizar el texto con color y sombra
+        text_surface = arcade_font.render('TIC TAC TOE', True, (255, 255, 255))
+        shadow_surface = arcade_font.render('TIC TAC TOE', True, (0, 0, 0))
+
+        # Crear una superficie más grande para el borde y la sombra
+        width, height = text_surface.get_size()
+        border_surface = pygame.Surface((width + 20, height + 20), pygame.SRCALPHA)
+        border_surface.fill((0, 0, 0, 0))  # Fondo transparente
+
+        # Dibujar la sombra
+        border_surface.blit(shadow_surface, (10, 10))
+
+        # Dibujar el texto original encima de la sombra
+        border_surface.blit(text_surface, (5, 5))
+
+        # Guardar la superficie como una imagen temporal
+        pygame.image.save(border_surface, 'temp_text.png')
+
+        # Cargar la imagen temporal con PIL
+        image = Image.open('temp_text.png')
+        photo = ImageTk.PhotoImage(image)
+
+        self.text_label = tk.Label(self, image=photo, bg="#490029", bd=5, relief="ridge")
+        self.text_label.image = photo  # Guardar una referencia de la imagen
+        self.text_label.pack(pady=(150, 20))  # Aumentar el margen superior
+
+        def toggle_color():
+            current_bg_color = self.text_label.cget("bg")
+            new_bg_color = "#490029" if current_bg_color == "#8B004E" else "#8B004E"
+            current_fg_color = "white" if new_bg_color == "#490029" else "#FFE89A"
+            
+            # Renderizar el texto con el nuevo color
+            text_surface = arcade_font.render('TIC TAC TOE', True, (255, 255, 255) if current_fg_color == "white" else (255, 255, 0))
+            shadow_surface = arcade_font.render('TIC TAC TOE', True, (0, 0, 0))
+            border_surface = pygame.Surface((width + 20, height + 20), pygame.SRCALPHA)
+            border_surface.fill((0, 0, 0, 0))
+            border_surface.blit(shadow_surface, (10, 10))
+            border_surface.blit(text_surface, (5, 5))
+            pygame.image.save(border_surface, 'temp_text.png')
+            image = Image.open('temp_text.png')
+            photo = ImageTk.PhotoImage(image)
+            
+            self.text_label.config(image=photo, bg=new_bg_color)
+            self.text_label.image = photo  # Guardar una referencia de la imagen
+            self.after(500, toggle_color)  # Alternar cada 500 ms
+
+        # Iniciar la alternancia de color
+        toggle_color()
+        
+        # Función para renderizar texto en un botón con un tamaño de fuente específico
+        def render_button_text(text, font_size):
+            button_font = pygame.font.Font('./useful/fuente.ttf', font_size)
+            text_surface = button_font.render(text, True, (255, 255, 255))
+            width, height = text_surface.get_size()
+            button_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+            button_surface.blit(text_surface, (0, 0))
+            pygame.image.save(button_surface, f'{text}_button.png')
+            return ImageTk.PhotoImage(Image.open(f'{text}_button.png'))
 
         # Botones
         self.play_button = ctk.CTkButton(
             self,
-            text="JUGAR",
+            text="",
+            image=render_button_text("JUGAR", 30),
             command=self.play,
             width=300,
             height=80,
-            fg_color="#c60030",
-            hover_color="#d23359",
+            fg_color="#490029",
+            hover_color="#8B004E",
             font=("Helvetica", 20),
             border_color="#6a0000",
             border_width=3,
@@ -131,12 +216,13 @@ class MainMenu(ctk.CTk):
 
         self.options_button = ctk.CTkButton(
             self,
-            text="OPCIONES",
+            text="",
+            image=render_button_text("OPCIONES", 30),
             command=self.open_options,
             width=300,
             height=80,
-            fg_color="#c60030",
-            hover_color="#d23359",
+            fg_color="#490029",
+            hover_color="#8B004E",
             font=("Helvetica", 20),
             border_color="#6a0000",
             border_width=3,
@@ -144,20 +230,21 @@ class MainMenu(ctk.CTk):
         )
         self.options_button.pack(pady=20)
 
-        self.options_button = ctk.CTkButton(
+        self.exit_button = ctk.CTkButton(
             self,
-            text="SALIR",
+            text="",
+            image=render_button_text("SALIR", 30),
             command=self.quit,
             width=300,
             height=80,
-            fg_color="#c60030",
-            hover_color="#d23359",
+            fg_color="#490029",
+            hover_color="#8B004E",
             font=("Helvetica", 20),
             border_color="#6a0000",
             border_width=3,
             text_color="white"
         )
-        self.options_button.pack(pady=20)
+        self.exit_button.pack(pady=20)
 
         # Redimensionar la imagen al tamaño de la ventana
         self.bind("<Configure>", self.resize_background)
