@@ -153,19 +153,14 @@ class design_master_form(tk.Toplevel):
         width_menu = 20
         height_menu = 2
         font_awesome = font.Font(family='FontAwesome', size=12)
-
-        self.labelperfil = tk.Label(side_bar, image=self.perfil, bg=self.Sidebar_color)
-        self.labelperfil.pack(side=tk.TOP, pady=15)
         
         # Añadir los Canvas para las imágenes en la sidebar
         self.canvas1 = tk.Canvas(side_bar, width=100, height=100, bg=self.Sidebar_color, highlightthickness=0)
         self.canvas1.pack(side=tk.TOP, pady=5)
-        self.canvas2 = tk.Canvas(side_bar, width=100, height=100, bg=self.Sidebar_color, highlightthickness=0)
-        self.canvas2.pack(side=tk.TOP, pady=5)
         
         # Inicializar imágenes en los canvas
         self.canvas1.create_image(50, 50, image=self.image1_initial)
-        self.canvas2.create_image(50, 50, image=self.image2_initial)
+        
 
         self.buttonScore = tk.Button(side_bar)
         self.buttonProfile = tk.Button(side_bar)
@@ -184,6 +179,11 @@ class design_master_form(tk.Toplevel):
 
         for text, icon, button in buttons_info:
             self.bar_button_config(button, text, icon, font_awesome, width_menu, height_menu)
+            
+        self.canvas2 = tk.Canvas(side_bar, width=100, height=100, bg=self.Sidebar_color, highlightthickness=0)
+        self.canvas2.pack(side=tk.TOP, pady=5)
+        
+        self.canvas2.create_image(50, 50, image=self.image2_initial)
 
     def bar_button_config(self, button, text, icon, font_awesome, width_menu, height_menu):
         button.config(text=f'  {icon}   {text}', anchor='w', font=font_awesome,
