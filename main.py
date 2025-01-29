@@ -39,31 +39,64 @@ class SelectSymbol(ctk.CTkToplevel):
         super().__init__(parent)
         
         self.setup_music()
-        self.geometry("300x300")
+        self.geometry("1280x720")
         self.iconbitmap("./images/icono_juego.ico")
         self.title("Seleccionar Ficha")
 
         # Eliminar los botones de minimizar y maximizar
         self.overrideredirect(True)
+        
+        # Renderizar el texto del título con la misma fuente y estilo
+        arcade_font = pygame.font.Font('./useful/fuente.ttf', 30)
+        text_surface = arcade_font.render('Selecciona tu Ficha', True, (255, 255, 255))
+        shadow_surface = arcade_font.render('Selecciona tu Ficha', True, (0, 0, 0))
+        width, height = text_surface.get_size()
+        border_surface = pygame.Surface((width + 20, height + 20), pygame.SRCALPHA)
+        border_surface.fill((0, 0, 0, 0))
+        border_surface.blit(shadow_surface, (10, 10))
+        border_surface.blit(text_surface, (5, 5))
+        pygame.image.save(border_surface, 'temp_text.png')
+        image = Image.open('temp_text.png')
+        photo = ImageTk.PhotoImage(image)
 
-        label = ctk.CTkLabel(self, text="Selecciona tu Ficha", font=("Helvetica", 16))
+        label = tk.Label(self, image=photo, bg="#490029", bd=5, relief="ridge")
+        label.image = photo  # Guardar una referencia de la imagen
         label.pack(pady=10)
 
         self.difficulty = difficulty
         self.on_symbol_selected = on_symbol_selected
+        
+        # Guardar referencias a las imágenes de los botones
+        self.button_images = {}
+
+        # Renderizar los botones con la misma fuente y estilo
+        def render_button_text(text, font_size):
+            button_font = pygame.font.Font('./useful/fuente.ttf', font_size)
+            text_surface = button_font.render(text, True, (255, 255, 255))
+            width, height = text_surface.get_size()
+            button_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+            button_surface.blit(text_surface, (0, 0))
+            pygame.image.save(button_surface, f'{text}_button.png')
+            image = Image.open(f'{text}_button.png')
+            self.button_images[text] = ImageTk.PhotoImage(image)  # Guardar referencia
+            return self.button_images[text]
 
         if difficulty == "medium":
-            ctk.CTkButton(self, text="Y", command=lambda: self.close_game("Y"), width=200, height=40, fg_color="#9C27B0", hover_color="#8E24AA").pack(pady=5)
-            ctk.CTkButton(self, text="Z", command=lambda: self.close_game("Z"), width=200, height=40, fg_color="#9C27B0", hover_color="#8E24AA").pack(pady=5)
+            ctk.CTkButton(self, text="", image=render_button_text("Y", 20), command=lambda: self.close_game("Y"), width=200, height=40, fg_color="#9C27B0", hover_color="#8E24AA").pack(pady=5)
+            ctk.CTkButton(self, text="", image=render_button_text("Z", 20), command=lambda: self.close_game("Z"), width=200, height=40, fg_color="#9C27B0", hover_color="#8E24AA").pack(pady=5)
         elif difficulty == "hard":
-            ctk.CTkButton(self, text="S", command=lambda: self.close_game("S"), width=200, height=40, fg_color="#F44336", hover_color="#E53935").pack(pady=5)
-            ctk.CTkButton(self, text="M", command=lambda: self.close_game("M"), width=200, height=40, fg_color="#F44336", hover_color="#E53935").pack(pady=5)
+            ctk.CTkButton(self, text="", image=render_button_text("S", 20), command=lambda: self.close_game("S"), width=200, height=40, fg_color="#F44336", hover_color="#E53935").pack(pady=5)
+            ctk.CTkButton(self, text="", image=render_button_text("M", 20), command=lambda: self.close_game("M"), width=200, height=40, fg_color="#F44336", hover_color="#E53935").pack(pady=5)
         else:
-            ctk.CTkButton(self, text="X", command=lambda: self.close_game("X"), width=200, height=40, fg_color="#4CAF50", hover_color="#45A049").pack(pady=5)
-            ctk.CTkButton(self, text="O", command=lambda: self.close_game("O"), width=200, height=40, fg_color="#4CAF50", hover_color="#45A049").pack(pady=5)
+            ctk.CTkButton(self, text="", image=render_button_text("X", 20), command=lambda: self.close_game("X"), width=200, height=40, fg_color="#4CAF50", hover_color="#45A049").pack(pady=5)
+            ctk.CTkButton(self, text="", image=render_button_text("O", 20), command=lambda: self.close_game("O"), width=200, height=40, fg_color="#4CAF50", hover_color="#45A049").pack(pady=5)
 
         # Botón para volver al menú principal
-        back_button = ctk.CTkButton(self, text="Volver al Menú Principal", command=self.back_to_main_menu, width=200, height=40, fg_color="#607D8B", hover_color="#546E7A")
+        # back_button = ctk.CTkButton(self, text="", image=render_button_text("Volver al Menú Principal", 20), command=self.back_to_main_menu, width=200, height=40, fg_color="#607D8B", hover_color="#546E7A")
+        # back_button.pack(pady=10)
+
+        # # Botón para volver al menú principal
+        back_button = ctk.CTkButton(self, text="", image=render_button_text("Volver al Menú Principal", 20), command=self.back_to_main_menu, width=200, height=40, fg_color="#607D8B", hover_color="#546E7A")
         back_button.pack(pady=10)
 
     def setup_music(self):
