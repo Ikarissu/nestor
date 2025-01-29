@@ -10,6 +10,8 @@ import pygame
 ctk.set_appearance_mode("dark")  # Opciones: "light", "dark", "system"
 ctk.set_default_color_theme("blue")  # Cambia el tema de color
 
+is_muted = False
+
 class SelectDifficulty(ctk.CTkFrame):
     def __init__(self, parent, on_difficulty_selected):
         super().__init__(parent, fg_color="transparent")  # Establecer el fondo del frame como transparente
@@ -36,11 +38,7 @@ class SelectSymbol(ctk.CTkToplevel):
     def __init__(self, parent, difficulty, on_symbol_selected):
         super().__init__(parent)
         
-        pygame.mixer.music.stop()
-        pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")
-        pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.4)
-        
+        self.setup_music()
         self.geometry("300x300")
         self.iconbitmap("./images/icono_juego.ico")
         self.title("Seleccionar Ficha")
@@ -68,6 +66,15 @@ class SelectSymbol(ctk.CTkToplevel):
         back_button = ctk.CTkButton(self, text="Volver al Menú Principal", command=self.back_to_main_menu, width=200, height=40, fg_color="#607D8B", hover_color="#546E7A")
         back_button.pack(pady=10)
 
+    def setup_music(self):
+        if not is_muted:
+            pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")
+            pygame.mixer.music.play(-1)
+            pygame.mixer.music.set_volume(0.4)
+        else:
+            pygame.mixer.music.set_volume(0)  # Silenciar música si is_muted es True
+
+
     def close_game(self, symbol):
         self.on_symbol_selected(symbol)
         self.destroy()
@@ -81,7 +88,6 @@ class SelectSymbol(ctk.CTkToplevel):
         self.master.deiconify()  # Mostrar la ventana principal
 
 # ...existing code...
-
 
 class MainMenu(ctk.CTk):
     def __init__(self):
@@ -260,6 +266,14 @@ class MainMenu(ctk.CTk):
         self.update_background()
         self.animate_gif(0)
 
+    def setup_music(self):
+        if not is_muted:
+            pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")
+            pygame.mixer.music.play(-1)
+            pygame.mixer.music.set_volume(0.4)
+        else:
+            pygame.mixer.music.set_volume(0)  # Silenciar música si is_muted es True
+
     def update_background(self):
         if self.frames:
             frame = self.frames[0]
@@ -278,8 +292,8 @@ class MainMenu(ctk.CTk):
             self.after(100, self.animate_gif, (frame_index + 1) % len(self.frames))
 
     def play(self):
-        pygame.mixer.music.stop()  # Detener la música de fondo
-        self.withdraw()  # Oculta el menú principal
+        pygame.mixer.music.stop()  
+        self.withdraw()  
         self.select_symbol()
 
     def select_symbol(self):
@@ -303,41 +317,43 @@ class MainMenu(ctk.CTk):
         elif self.difficulty == "hard":
             self.original_music = "./music/Take On Me 8 Bit.mp3"
 
-        pygame.mixer.music.load(self.original_music)  # Cargar la música de la dificultad
-        pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.4)
+        if not is_muted:
+            pygame.mixer.music.load(self.original_music)  # Cargar la música de la dificultad
+            pygame.mixer.music.play(-1)
+            pygame.mixer.music.set_volume(0.4)
+        else:
+            pygame.mixer.music.set_volume(0)  # Silenciar música si is_muted es True
+
         game_window = design_master_form(self.difficulty, self.player_symbol, self.computer_symbol)
         game_window.mainloop()
 
     def open_options(self):
-        pygame.mixer.music.stop()
-        pygame.mixer.music.load("./music/Sugar Were Goin Down 8 Bit.mp3")
-        pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.4)
         self.withdraw()
         OptionsWindow(self)
 
     def restart_menu_music(self):
-        pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")
-        pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.4)
+        if not is_muted:  # Verificar si la música está silenciada
+            pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")
+            pygame.mixer.music.play(-1)
+            pygame.mixer.music.set_volume(0.4)
+        else:
+            pygame.mixer.music.set_volume(0)  # Silenciar música si is_muted es True
+
         
-        def close_window(self):
-            self.destroy()
+    def close_window(self):
+        self.destroy()
 
 class OptionsWindow(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
-
         # Configuración de la ventana
         self.title("Opciones")
         self.geometry("1280x720")
+        self.resizable(False, False)
+        self.maxsize(1280, 720)
         self.iconbitmap("./images/icono_juego.ico")
-        # Eliminar los botones de minimizar y maximizar
-        self.overrideredirect(True)
-                # Crear un botón de cerrar
-        close_button = ctk.CTkButton(self, text="Cerrar", command=self.close_window)
-        close_button.pack(pady=10, padx=10, anchor='ne')
+        self.attributes('-toolwindow', True)  # Deshabilitar minimizar y maximizar
+
         # Cargar la imagen de fondo de la ventana de opciones
         try:
             self.original_image = Image.open("./images/fondo_menu.gif")
@@ -362,8 +378,33 @@ class OptionsWindow(ctk.CTkToplevel):
         self.back_button = ctk.CTkButton(self, text="VOLVER", command=self.on_back, width=300, height=80, fg_color="#0b5345", hover_color="lightgreen", font=("Arial", 20))
         self.back_button.pack(pady=20)
 
+        # Botón de silenciar
+        self.mute_button = ctk.CTkButton(self, text="", command=self.toggle_mute, width=300, height=80, fg_color="#0b5345", hover_color="lightgreen", font=("Arial", 20))
+        self.mute_button.pack(pady=20)
+
+        # Inicializar el texto del botón según el estado de silencio
+        self.update_mute_button_text()
+
         # Manejar el evento de cierre de la ventana
-        self.protocol("WM_DELETE_WINDOW", self.on_close)
+        self.protocol("WM_DELETE_WINDOW", self.close_window)
+
+    def update_mute_button_text(self):
+        if is_muted:
+            self.mute_button.configure(text="ACTIVAR MÚSICA")
+        else:
+            self.mute_button.configure(text="SILENCIAR MÚSICA")
+
+    def toggle_mute(self):
+        global is_muted 
+        is_muted = not is_muted  
+        if is_muted:
+            pygame.mixer.music.set_volume(0)  # Silenciar música
+        else:
+            pygame.mixer.music.set_volume(0.4)  # Restaurar volumen
+        self.master.setup_music()  
+        self.update_mute_button_text() 
+
+
 
     def resize_background(self, event):
         self.update_background()
@@ -384,13 +425,11 @@ class OptionsWindow(ctk.CTkToplevel):
     def on_back(self):
         self.destroy()
         self.master.deiconify()
-        self.master.restart_menu_music()
 
     def on_close(self):
         pygame.mixer.music.stop()
         self.destroy()
         self.master.deiconify()
-        self.master.restart_menu_music()
         
     def close_window(self):
         self.destroy()
