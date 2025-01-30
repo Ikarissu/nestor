@@ -103,6 +103,15 @@ class SelectSymbol(ctk.CTkToplevel):
         # Eliminar los botones de minimizar y maximizar
         self.overrideredirect(True)
         
+        # Cargar la imagen de fondo
+        background_image = Image.open("./images/Ficha.png")
+        background_photo = ImageTk.PhotoImage(background_image)
+
+        # Crear un label para la imagen de fondo
+        background_label = tk.Label(self, image=background_photo)
+        background_label.image = background_photo  # Guardar una referencia de la imagen
+        background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
         # Renderizar el texto del título con la misma fuente y estilo
         arcade_font = pygame.font.Font('./useful/fuente.ttf', 30)
         text_surface = arcade_font.render('Selecciona tu Ficha', True, (255, 255, 255))
@@ -149,10 +158,6 @@ class SelectSymbol(ctk.CTkToplevel):
             ctk.CTkButton(self, text="", image=render_button_text("O", 20), command=lambda: self.close_game("O"), width=200, height=40, fg_color="#4CAF50", hover_color="#45A049").pack(pady=5)
 
         # Botón para volver al menú principal
-        # back_button = ctk.CTkButton(self, text="", image=render_button_text("Volver al Menú Principal", 20), command=self.back_to_main_menu, width=200, height=40, fg_color="#607D8B", hover_color="#546E7A")
-        # back_button.pack(pady=10)
-
-        # # Botón para volver al menú principal
         back_button = ctk.CTkButton(self, text="", image=render_button_text("Volver al Menú Principal", 20), command=self.back_to_main_menu, width=200, height=40, fg_color="#607D8B", hover_color="#546E7A")
         back_button.pack(pady=10)
 
@@ -163,7 +168,6 @@ class SelectSymbol(ctk.CTkToplevel):
             pygame.mixer.music.set_volume(0.4)
         else:
             pygame.mixer.music.set_volume(0)  # Silenciar música si is_muted es True
-
 
     def close_game(self, symbol):
         self.on_symbol_selected(symbol)
