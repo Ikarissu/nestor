@@ -93,6 +93,7 @@ class SelectDifficulty(ctk.CTkFrame):
 
 class SelectSymbol(ctk.CTkToplevel):
     def __init__(self, parent, difficulty, on_symbol_selected):
+        global is_muted
         super().__init__(parent)
         
         self.setup_music()
@@ -424,7 +425,7 @@ class MainMenu(ctk.CTk):
         else:
             pygame.mixer.music.set_volume(0)  # Silenciar música si is_muted es True
 
-        game_window = design_master_form(self.difficulty, self.player_symbol, self.computer_symbol)
+        game_window = design_master_form(self.difficulty, self.player_symbol, self.computer_symbol, is_muted)
         game_window.mainloop()
 
     def open_options(self):
@@ -559,19 +560,22 @@ class OptionsWindow(ctk.CTkToplevel):
         self.protocol("WM_DELETE_WINDOW", self.close_window)
 
     def setup_music(self):
+        print(f'Setting up music. Mute state: {is_muted}')  # Debugging output
         if not is_muted:
             pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")
             pygame.mixer.music.play(-1)
             pygame.mixer.music.set_volume(0.4)
         else:
-            pygame.mixer.music.set_volume(0)  # Silenciar música si is_muted es True
+            pygame.mixer.music.set_volume(0)
 
     def toggle_mute(self):
-        self.is_muted = not self.is_muted  # Actualizar el valor de is_muted
-        if self.is_muted:
-            pygame.mixer.music.set_volume(0)  # Silenciar música
+        global is_muted
+        is_muted = not is_muted
+        print(f'Mute state changed: {is_muted}')  # Debugging output
+        if is_muted:
+            pygame.mixer.music.set_volume(0)
         else:
-            pygame.mixer.music.set_volume(0.4)  # Restaurar volumen
+            pygame.mixer.music.set_volume(0.4)
 
     def resize_background(self, event):
         self.update_background()

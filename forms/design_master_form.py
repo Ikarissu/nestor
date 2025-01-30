@@ -14,7 +14,7 @@ from config import (
 )
 
 class design_master_form(tk.Toplevel):
-    def __init__(self, difficulty, player_symbol, computer_symbol):
+    def __init__(self, difficulty, player_symbol, computer_symbol, is_muted):
         super().__init__()
         self.title('Choclo Game')
         self.geometry("1280x720")
@@ -46,8 +46,7 @@ class design_master_form(tk.Toplevel):
         self.mode = "singlePlayer"
         self.board = {i: " " for i in range(1, 10)}
 
-        # Declarar self.perfil
-        self.perfil = useful_img.read_image("./images/jugador.png", (100, 100))
+        self.is_muted = is_muted
 
         # Cargar las imágenes
         self.load_images()
@@ -82,16 +81,19 @@ class design_master_form(tk.Toplevel):
         ctypes.windll.user32.SetWindowLongW(hwnd, -16, style)
 
     def play_losing_music(self):
-        pygame.mixer.music.load("./music/The Sound of Silence 8 Bit.mp3")  
-        pygame.mixer.music.play(-1)
+        if not self.is_muted:
+            pygame.mixer.music.load("./music/The Sound of Silence 8 Bit.mp3")  
+            pygame.mixer.music.play(-1)
     
     def play_wining_music(self):
-        pygame.mixer.music.load("./music/Sweet Child O Mine 8 Bit.mp3")  
-        pygame.mixer.music.play(-1)
+        if not self.is_muted:
+            pygame.mixer.music.load("./music/Sweet Child O Mine 8 Bit.mp3")  
+            pygame.mixer.music.play(-1)
 
     def play_original_music(self):
-        pygame.mixer.music.load(self.master.original_music)  
-        pygame.mixer.music.play(-1)  
+        if not self.is_muted:
+            pygame.mixer.music.load(self.master.original_music)  
+            pygame.mixer.music.play(-1)
 
     def load_images(self):
         self.image1_initial = Image.open("./images/C_Base.png").resize((100, 100), Image.Resampling.LANCZOS)
@@ -411,7 +413,9 @@ class design_master_form(tk.Toplevel):
         self.background_label.config(image=self.background_photo)
 
     def open_menu(self):
-        pygame.mixer.music.stop()  # Detener la música del juego
-        self.master.restart_menu_music()  # Reiniciar la música del menú
+        global is_muted
+        if not self.is_muted:
+            pygame.mixer.music.stop()  # Detener la música del juego solo si no está silenciada
+        self.master.restart_menu_music()  # Reiniciar la música del menú (esto se manejará en main.py)
         self.destroy()  
-        self.master.deiconify()   
+        self.master.deiconify()
