@@ -141,7 +141,7 @@ class design_master_form(tk.Toplevel):
 
         self.buttons = []
         for i in range(9):
-            button = tk.Button(game_frame, text="", font=("Helvetica", 24), width=5, height=2,
+            button = tk.Button(game_frame, text="", font=("Terminal", 24), width=5, height=2,
                                command=lambda i=i: self.on_button_click(i))
             button.grid(row=i // 3, column=i % 3, padx=5, pady=5)
             self.buttons.append(button)
@@ -154,12 +154,12 @@ class design_master_form(tk.Toplevel):
 
         font_awesome = font.Font(family='fontAwesome', size=12)
 
-        self.labelTitle = tk.Label(top_bar, text="Choclo game")
-        self.labelTitle.config(fg="#fff", font=("Helvetica", 15), bg=self.Top_Bar_color, pady=10, width=16)
+        self.labelTitle = tk.Label(top_bar, text="TIC TAC TOE")
+        self.labelTitle.config(fg="#fff", font=("Terminal", 20), bg=self.Top_Bar_color, pady=10, width=16)
         self.labelTitle.pack(side=tk.LEFT)
 
-        self.labelTitle = tk.Label(top_bar, text="¡Bienvenido a choclo game!")
-        self.labelTitle.config(fg="#fff", font=("Helvetica", 15), bg=self.Top_Bar_color, padx=20, width=20)
+        self.labelTitle = tk.Label(top_bar, text="¡BIENVENIDO AL JUEGO!")
+        self.labelTitle.config(fg="#fff", font=("Terminal", 20), bg=self.Top_Bar_color, padx=20, width=20)
         self.labelTitle.pack(side=tk.RIGHT)
 
     def side_bar_controls(self, main_frame):
@@ -182,19 +182,20 @@ class design_master_form(tk.Toplevel):
         self.buttonProfile = tk.Button(side_bar)
         self.buttonPicture = tk.Button(side_bar)
         self.buttonInfo = tk.Button(side_bar)
-        self.buttonMenu = tk.Button(side_bar, text="Volver al Menú", command=self.open_menu)
-        self.buttonReset = tk.Button(side_bar, text="Reiniciar Partida", command=self.resetGame)
+        self.buttonMenu = tk.Button(side_bar, text="VOLVER", command=self.open_menu)
+        self.buttonReset = tk.Button(side_bar, text="REINICIAR", command=self.resetGame)
         
-        self.score_label = tk.Label(side_bar, text=f"Partidas Ganadas: {self.player_score}\nPartidas Perdidas: {self.computer_score}\nPartidas Empatadas: {self.empate_score}",pady=10, font=("Helvetica", 12), bg=self.Sidebar_color, fg="white")
+        self.score_label = tk.Label(side_bar, text=f"GANADAS: {self.player_score}\nPERDIDAS: {self.computer_score}\nEMPATADAS: {self.empate_score}",pady=10, font=("Terminal", 20), bg=self.Sidebar_color, fg="white")
         self.score_label.pack(pady=10)
 
         buttons_info = [
-            ("Reiniciar Partida", "\u21BB", self.buttonReset),
-            ("Volver al Menú", "\u21A9", self.buttonMenu)
+            ("REINICIAR", "\u21BB", self.buttonReset),
+            ("VOLVER", "\u21A9", self.buttonMenu)
         ]
 
         for text, icon, button in buttons_info:
             self.bar_button_config(button, text, icon, font_awesome, width_menu, height_menu)
+            button.configure(font=("Terminal", 20))
             
         self.canvas2 = tk.Canvas(side_bar, width=100, height=100, bg=self.Sidebar_color, highlightthickness=0)
         self.canvas2.pack(side=tk.TOP, pady=5)
@@ -337,13 +338,13 @@ class design_master_form(tk.Toplevel):
                     self.computer_score += 1
                     self.update_images("defeat")
                 self.update_score_label()
-                self.labelTitle.config(text=f"{self.turn} gana el juego")
+                self.labelTitle.config(text="¡Haz Ganado!")
                 self.game_end = True
             elif self.checkForDraw():
                 self.empate_score += 1
                 self.update_images("draw")
                 self.update_score_label()
-                self.labelTitle.config(text="Empate")
+                self.labelTitle.config(text="¡Haz Empatado!")
                 self.game_end = True
             else:
                 self.turn = self.computer_symbol if self.turn == self.player_symbol else self.player_symbol
@@ -357,7 +358,7 @@ class design_master_form(tk.Toplevel):
         if self.checkForWin(self.computer_symbol):
             self.computer_score += 1
             self.update_score_label()
-            self.labelTitle.config(text=f"{self.computer_symbol} gana el juego")
+            self.labelTitle.config(text="¡Haz Empatado!")
             self.update_images("defeat")
             self.play_losing_music()  
             self.game_end = True
@@ -395,7 +396,7 @@ class design_master_form(tk.Toplevel):
             self.canvas2.create_image(50, 50, image=self.image2_initial)
 
     def update_score_label(self):
-        self.score_label.config(text=f"Partidas Ganadas: {self.player_score}\nPartidas Perdidas: {self.computer_score}\nPartidas Empatadas: {self.empate_score}")
+        self.score_label.config(text=f"GANADAS: {self.player_score}\nPERDIDAS: {self.computer_score}\nEMPATADAS: {self.empate_score}")
 
     def disable_buttons(self):
         for button in self.buttons:

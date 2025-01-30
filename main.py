@@ -115,8 +115,8 @@ class SelectSymbol(ctk.CTkToplevel):
 
         # Renderizar el texto del título con la misma fuente y estilo
         arcade_font = pygame.font.Font('./useful/fuente.ttf', 30)
-        text_surface = arcade_font.render('Selecciona tu Ficha', True, (255, 255, 255))
-        shadow_surface = arcade_font.render('Selecciona tu Ficha', True, (0, 0, 0))
+        text_surface = arcade_font.render('SELECCIONAR FICHA', True, (255, 255, 255))
+        shadow_surface = arcade_font.render('SELECCIONAR FICHA', True, (0, 0, 0))
         width, height = text_surface.get_size()
         border_surface = pygame.Surface((width + 20, height + 20), pygame.SRCALPHA)
         border_surface.fill((0, 0, 0, 0))
@@ -128,7 +128,7 @@ class SelectSymbol(ctk.CTkToplevel):
 
         label = tk.Label(self, image=photo, bg="#490029", bd=5, relief="ridge")
         label.image = photo  # Guardar una referencia de la imagen
-        label.pack(pady=10)
+        label.pack(pady=60)
 
         self.difficulty = difficulty
         self.on_symbol_selected = on_symbol_selected
@@ -159,7 +159,7 @@ class SelectSymbol(ctk.CTkToplevel):
             ctk.CTkButton(self, text="", image=render_button_text("O", 20), command=lambda: self.close_game("O"), width=200, height=40, fg_color="#4CAF50", hover_color="#45A049").pack(pady=5)
 
         # Botón para volver al menú principal
-        back_button = ctk.CTkButton(self, text="", image=render_button_text("Volver al Menú Principal", 20), command=self.back_to_main_menu, width=200, height=40, fg_color="#607D8B", hover_color="#546E7A")
+        back_button = ctk.CTkButton(self, text="", image=render_button_text("VOLVER", 20), command=self.back_to_main_menu, width=200, height=40, fg_color="#490029", hover_color="#8B004E", border_color="#6a0000")
         back_button.pack(pady=10)
 
     def setup_music(self):
