@@ -5,6 +5,7 @@ import useful.useful_image as useful_img
 import useful.useful_window as useful_window
 import random
 import pygame
+import ctypes
 
 from config import (
     Top_Bar_color_easy, Top_Bar_color_medium, Top_Bar_color_hard,
@@ -26,6 +27,10 @@ class design_master_form(tk.Toplevel):
         # Fijar el tamaño mínimo y máximo de la ventana
         self.minsize(1280, 720)
         self.maxsize(1280, 720)
+
+        # Deshabilitar el botón de cierre (X)
+        self.protocol("WM_DELETE_WINDOW", self.disable_event)
+        self.remove_close_button()
 
         self.difficulty = difficulty
         self.player_symbol = player_symbol
@@ -67,6 +72,15 @@ class design_master_form(tk.Toplevel):
         self.create_widgets()
         self.updateBoard()
     
+    def disable_event(self):
+        pass  # No hacer nada cuando se intenta cerrar la ventana
+
+    def remove_close_button(self):
+        hwnd = ctypes.windll.user32.GetParent(self.winfo_id())
+        style = ctypes.windll.user32.GetWindowLongW(hwnd, -16)
+        style &= ~0x80000  # WS_SYSMENU
+        ctypes.windll.user32.SetWindowLongW(hwnd, -16, style)
+
     def play_losing_music(self):
         pygame.mixer.music.load("./music/The Sound of Silence 8 Bit.mp3")  
         pygame.mixer.music.play(-1)

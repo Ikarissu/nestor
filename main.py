@@ -5,6 +5,7 @@ from customtkinter import CTkImage
 from forms.design_master_form import design_master_form
 from PIL import Image, ImageTk, ImageSequence, ImageDraw, ImageFilter
 import pygame 
+import ctypes
 
 # Configuración de la apariencia de CustomTkinter
 ctk.set_appearance_mode("dark")  # Opciones: "light", "dark", "system"
@@ -15,9 +16,13 @@ is_muted = False
 class SelectDifficulty(ctk.CTkFrame):
     def __init__(self, parent, on_difficulty_selected):
         super().__init__(parent, fg_color="transparent")  # Establecer el fondo del frame como transparente
-        self.pack(pady=20)
+        self.pack(pady=0)
         
         self.on_difficulty_selected = on_difficulty_selected
+
+        # Crear un marco para los botones con un fondo de color rojo oscuro
+        button_frame = ctk.CTkFrame(self, fg_color="#686de0", corner_radius=10)
+        button_frame.pack(pady=3, padx=3, fill="both", expand=True)
 
         # Guardar referencias a las imágenes de los botones
         self.button_images = {}
@@ -35,62 +40,52 @@ class SelectDifficulty(ctk.CTkFrame):
             return self.button_images[text]
 
         self.easy_button = ctk.CTkButton(
-             self,
-             text="",
-             image=render_button_text("FACIL", 20),
-             command=lambda: self.set_difficulty("easy"),
-             width=300,
-             height=80,
-             fg_color="#490029",
-             hover_color="#8B004E",
-             font=("Helvetica", 20),
-             border_color="#6a0000",
-             border_width=3,
-             text_color="white"
-         )
+                    button_frame,
+                    text="",
+                    image=render_button_text("FACIL", 20),
+                    command=lambda: self.set_difficulty("easy"),
+                    width=300,
+                    height=80,
+                    fg_color="#00FF00",  # Verde
+                    hover_color="#008000",  # Verde oscuro
+                    font=("Helvetica", 20),
+                    border_color="#6a0000",
+                    border_width=6,
+                    text_color="white"
+                )
         self.easy_button.pack(pady=20)
 
         self.medium_button = ctk.CTkButton(
-             self,
-             text="",
-             image=render_button_text("MEDIO", 20),
-             command=lambda: self.set_difficulty("medium"),
-             width=300,
-             height=80,
-             fg_color="#490029",
-             hover_color="#8B004E",
-             font=("Helvetica", 20),
-             border_color="#6a0000",
-             border_width=3,
-             text_color="white"
-         )
+                    button_frame,
+                    text="",
+                    image=render_button_text("MEDIO", 20),
+                    command=lambda: self.set_difficulty("medium"),
+                    width=300,
+                    height=80,
+                    fg_color="#800080",  # Morado
+                    hover_color="#4B0082",  # Morado oscuro
+                    font=("Helvetica", 20),
+                    border_color="#6a0000",
+                    border_width=6,
+                    text_color="white"
+                )
         self.medium_button.pack(pady=20)
 
         self.hard_button = ctk.CTkButton(
-             self,
-             text="",
-             image=render_button_text("DIFICIL", 20),
-             command=lambda: self.set_difficulty("hard"),
-             width=300,
-             height=80,
-             fg_color="#490029",
-             hover_color="#8B004E",
-             font=("Helvetica", 20),
-             border_color="#6a0000",
-             border_width=3,
-             text_color="white"
-         )
+                    button_frame,
+                    text="",
+                    image=render_button_text("DIFICIL", 20),
+                    command=lambda: self.set_difficulty("hard"),
+                    width=300,
+                    height=80,
+                    fg_color="#FF0000",  # Rojo
+                    hover_color="#8B0000",  # Rojo oscuro
+                    font=("Helvetica", 20),
+                    border_color="#6a0000",
+                    border_width=6,
+                    text_color="white"
+                )
         self.hard_button.pack(pady=20)
-
-        # label = ctk.CTkLabel(self, text="Selecciona la Dificultad", font=("Helvetica", 26), text_color="white")  # Establecer el color del texto como negro
-        # label.pack(pady=10)
-
-        # easy_button = ctk.CTkButton(self, text="Fácil", command=lambda: self.set_difficulty("easy"), width=500, height=80, fg_color="transparent", hover_color="#45A049")
-        # easy_button.pack(pady=10)
-        # medium_button = ctk.CTkButton(self, text="Medio", command=lambda: self.set_difficulty("medium"), width=500, height=80, fg_color="transparent", hover_color="#8E24AA")
-        # medium_button.pack(pady=10)
-        # hard_button = ctk.CTkButton(self, text="Difícil", command=lambda: self.set_difficulty("hard"), width=500, height=80, fg_color="transparent", hover_color="#E53935")
-        # hard_button.pack(pady=10)
 
     def set_difficulty(self, selected_difficulty):
         self.on_difficulty_selected(selected_difficulty)
@@ -203,6 +198,9 @@ class MainMenu(ctk.CTk):
         self.iconbitmap("./images/icono_juego.ico")
         # Establecer la dificultad por defecto a "fácil"
         self.difficulty = "easy"
+
+        # Ocultar los botones de cerrar y minimizar
+        self.after(10, self.hide_close_button)
 
         # Cargar la imagen de fondo del menú
         try:
@@ -357,6 +355,13 @@ class MainMenu(ctk.CTk):
         self.update_background()
         self.animate_gif(0)
 
+    def hide_close_button(self):
+        hwnd = ctypes.windll.user32.GetParent(self.winfo_id())
+        style = ctypes.windll.user32.GetWindowLongPtrW(hwnd, -16)
+        style &= ~0x80000  # WS_SYSMENU
+        ctypes.windll.user32.SetWindowLongPtrW(hwnd, -16, style)
+        ctypes.windll.user32.DrawMenuBar(hwnd)
+
     def setup_music(self):
         if not is_muted:
             pygame.mixer.music.load("./music/Uma Thurman 8 Bit.mp3")
@@ -503,8 +508,8 @@ class OptionsWindow(ctk.CTkToplevel):
         text="",
         image=render_button_text("SILENCIAR MUSICA", 20),
         command=self.toggle_mute,
-        width=300,
-        height=80,
+        width=100,
+        height=40,
         fg_color="#490029",
         hover_color="#8B004E",
         font=("Helvetica", 20),
@@ -513,6 +518,21 @@ class OptionsWindow(ctk.CTkToplevel):
         text_color="white"
         )
         self.mute_button.pack(pady=20)   
+        self.tutorial_button = ctk.CTkButton(
+        self,
+        text="",
+        image=render_button_text("COMO JUGAR", 20),
+        command=self.show_tutorial,
+        width=100,
+        height=40,
+        fg_color="#490029",
+        hover_color="#8B004E",
+        font=("Helvetica", 20),
+        border_color="#6a0000",
+        border_width=3,
+        text_color="white"
+        )
+        self.tutorial_button.pack(pady=20)   
         
         # Agregar el botón de "Volver al Menú"
         self.back_button = ctk.CTkButton(
@@ -520,8 +540,8 @@ class OptionsWindow(ctk.CTkToplevel):
             text="",
             image=render_button_text("VOLVER", 20),
             command=self.on_back,
-            width=300,
-            height=80,
+            width=100,
+            height=40,
             fg_color="#490029",
             hover_color="#8B004E",
             font=("Helvetica", 20),
@@ -576,7 +596,34 @@ class OptionsWindow(ctk.CTkToplevel):
         
     def close_window(self):
         self.destroy()
-        
+
+    def show_tutorial(self):
+        tutorial_window = tk.Toplevel(self)
+        tutorial_window.title("Tutorial")
+        tutorial_window.geometry("1280x720")
+        tutorial_window.resizable(False, False)
+        tutorial_window.overrideredirect(True)  # Deshabilitar los botones de minimizar y cerrar
+
+        tutorial_image = Image.open("./images/Tutorial.png").resize((1280, 720), Image.LANCZOS)
+        tutorial_photo = ImageTk.PhotoImage(tutorial_image)
+
+        tutorial_label = tk.Label(tutorial_window, image=tutorial_photo)
+        tutorial_label.image = tutorial_photo  # Guardar una referencia de la imagen
+        tutorial_label.pack()
+
+        # Crear un botón "X" para cerrar la ventana
+        close_button = tk.Button(
+            tutorial_window,
+            text="X",
+            command=tutorial_window.destroy,
+            bg="red",
+            fg="white",
+            font=("Helvetica", 12, "bold"),
+            bd=0,
+            relief="flat"
+        )
+        close_button.place(x=1250, y=10, width=20, height=20)
+
 if __name__ == "__main__":
     app = MainMenu()
     app.mainloop()
